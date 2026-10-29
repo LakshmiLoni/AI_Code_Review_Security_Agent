@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}About SentinelAI Code Review Agent{% endblock %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 0 auto;">
+  <div style="margin-bottom: 2rem;">
+    <h1 style="font-size: 2rem; font-weight: 800;">About This Project</h1>
+    <p style="color: var(--text-muted); font-size: 1.05rem;">
+      Technical Architecture, Methodology, and Academic Rationale for College Project Review.
+    </p>
+  </div>
+
+  <div class="card card-gold-accent" style="margin-bottom: 1.5rem;">
+    <h2 style="font-size: 1.25rem; margin-bottom: 0.75rem; color: #92400e;">1. Problem Statement & Motivation</h2>
+    <p style="margin-bottom: 0.75rem; font-size: 0.95rem; line-height: 1.6;">
+      Modern software development cycles require rapid code releases, frequently resulting in unreviewed code entering production.
+      Traditional manual code review is slow and error-prone, while enterprise SAST scanners often produce hundreds of opaque alerts without actionable, context-aware remediations.
+    </p>
+    <p style="font-size: 0.95rem; line-height: 1.6;">
+      This project implements an intelligent, explainable <strong>Multi-Agent AI Code Review and Security Analysis Agent</strong> that combines Abstract Syntax Tree (AST) parsing with an authoritative local Retrieval-Augmented Generation (RAG) cybersecurity knowledge base.
+    </p>
+  </div>
+
+  <div class="card" style="margin-bottom: 1.5rem;">
+    <h2 style="font-size: 1.25rem; margin-bottom: 0.75rem;">2. Core System Architecture</h2>
+    <div style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.95rem;">
+      <div>
+        <strong>Code Parser:</strong> Converts Python source code into Python AST nodes (<code>ast.parse</code>) and extracts tokenized structures for Java, measuring function lines, branches, and parameters.
+      </div>
+      <div>
+        <strong>Multi-Agent System:</strong>
+        <ul style="padding-left: 1.25rem; margin-top: 0.25rem;">
+          <li><em>Quality Agent:</em> Inspects maintainability, complexity, naming, and error handling.</li>
+          <li><em>Security Agent:</em> Detects OWASP Top 10 vulnerabilities (SQLi, Command Injection, hardcoded secrets, weak crypto).</li>
+          <li><em>Remediation Agent:</em> Produces safe side-by-side corrected code and developer guidance.</li>
+          <li><em>Summary Agent:</em> Computes risk metrics, severity breakdowns, and remaining risk assessments.</li>
+        </ul>
+      </div>
+      <div>
+        <strong>RAG Knowledge Base:</strong> Over 1,900 lines of rigorous educational content indexed into ChromaDB / scikit-learn TF-IDF vector space for semantic source attribution.
+      </div>
+      <div>
+        <strong>Offline First:</strong> Can start and function completely without cloud API credentials using local heuristic synthesis.
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom: 1.5rem;">
+    <h2 style="font-size: 1.25rem; margin-bottom: 0.75rem;">3. Technology Stack</h2>
+    <table class="table" style="font-size: 0.9rem;">
+      <tbody>
+        <tr><td><strong>Backend Framework:</strong></td><td>Python 3.11 & Flask 3.1</td></tr>
+        <tr><td><strong>Static Code Parsing:</strong></td><td>Python Abstract Syntax Tree (AST), Regular Expressions</td></tr>
+        <tr><td><strong>Database:</strong></td><td>SQLite with parameterized queries and foreign keys</td></tr>
+        <tr><td><strong>RAG & Retrieval:</strong></td><td>ChromaDB with scikit-learn TF-IDF + Cosine Similarity fallback</td></tr>
+        <tr><td><strong>Generative AI:</strong></td><td>Google Gemini API (via modern <code>google-genai</code> SDK)</td></tr>
+        <tr><td><strong>Frontend:</strong></td><td>Jinja2, HTML5, CSS3, JavaScript, Chart.js</td></tr>
+        <tr><td><strong>Testing:</strong></td><td>pytest & python unittest suite</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

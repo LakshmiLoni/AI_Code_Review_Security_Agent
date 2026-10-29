@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}AI Code Review & Security Analysis Agent{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <a href="{{ url_for('main.index') }}" class="nav-brand">
+      <div class="brand-icon">🛡️</div>
+      <span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="{{ url_for('main.index') }}">Home</a></li>
+      <li><a href="{{ url_for('main.dashboard') }}">Dashboard</a></li>
+      <li><a href="{{ url_for('reviews.new_review') }}" class="btn-cta">New Review</a></li>
+      <li><a href="{{ url_for('reviews.review_history') }}">History</a></li>
+      <li><a href="{{ url_for('assistant.assistant_ui') }}">AI Assistant</a></li>
+      <li><a href="{{ url_for('main.about') }}">About</a></li>
+    </ul>
+  </header>
+
+  <!-- Main Container -->
+  <main class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-messages">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+  </footer>
+
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

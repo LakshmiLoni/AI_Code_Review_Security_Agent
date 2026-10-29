@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Home - AI Code Review & Security Analysis Agent{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <h1><span>AI Code Review</span> & Security Assurance</h1>
+  <div class="hero-actions">
+  <div class="hero-actions">
+    <a href="{{ url_for('reviews.new_review') }}" class="btn btn-primary" style="font-size: 1.05rem; padding: 0.75rem 1.75rem;">
+      🔍 Start Code Review
+    </a>
+    <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary" style="font-size: 1.05rem; padding: 0.75rem 1.5rem;">
+      📊 View Dashboard
+    </a>
+  </div>
+</section>
+
+
+
+<!-- Architecture & Multi-Agent Workflow -->
+<h2 style="margin-bottom: 1.25rem; font-size: 1.5rem;">🤖 Multi-Agent Review Architecture</h2>
+<div class="grid-4">
+  <div class="card">
+    <div style="font-size: 1.75rem; margin-bottom: 0.5rem;">🔬</div>
+    <h3 style="font-size: 1.1rem; margin-bottom: 0.4rem;">Code Quality Agent</h3>
+    <p style="color: var(--text-muted); font-size: 0.9rem;">
+      Evaluates syntax validity, cyclomatic complexity, monolithic functions, unused imports, naming conventions, and error handling.
+    </p>
+  </div>
+
+  <div class="card">
+    <div style="font-size: 1.75rem; margin-bottom: 0.5rem;">🛡️</div>
+    <h3 style="font-size: 1.1rem; margin-bottom: 0.4rem;">Security Agent</h3>
+    <p style="color: var(--text-muted); font-size: 0.9rem;">
+      Detects SQLi, Command Injection, unsafe deserialization, hardcoded API keys, weak cryptography (MD5/SHA1), and path traversal.
+    </p>
+  </div>
+
+  <div class="card">
+    <div style="font-size: 1.75rem; margin-bottom: 0.5rem;">⚡</div>
+    <h3 style="font-size: 1.1rem; margin-bottom: 0.4rem;">Remediation Agent</h3>
+    <p style="color: var(--text-muted); font-size: 0.9rem;">
+      Generates side-by-side corrected code snippets, explains why the fix is safer, and provides developer review recommendations.
+    </p>
+  </div>
+
+  <div class="card">
+    <div style="font-size: 1.75rem; margin-bottom: 0.5rem;">📋</div>
+    <h3 style="font-size: 1.1rem; margin-bottom: 0.4rem;">Summary Agent</h3>
+    <p style="color: var(--text-muted); font-size: 0.9rem;">
+      Calculates composite security/quality scores (0-100), severity counts, executive narratives, and outlines remaining risks.
+    </p>
+  </div>
+</div>
+
+<!-- Highlights and CTA -->
+<div class="grid-2">
+  <div class="card">
+    <h3 style="margin-bottom: 0.75rem;">Supported Vulnerability Checks</h3>
+    <ul style="list-style-type: none; padding-left: 0; font-size: 0.95rem; line-height: 1.8;">
+      <li>🔴 <strong>SQL Injection (CWE-89)</strong>: String interpolation in query builders.</li>
+      <li>🔴 <strong>Command Injection (CWE-78)</strong>: Subshell execution with shell metacharacters.</li>
+      <li>🔴 <strong>Dynamic Code Execution (CWE-95)</strong>: Unsafe eval() / exec() calls.</li>
+      <li>🔴 <strong>Insecure Deserialization (CWE-502)</strong>: Python pickle & Java ObjectInputStream.</li>
+      <li>🟠 <strong>Hardcoded Secrets (CWE-798)</strong>: AWS keys, database URIs, API tokens.</li>
+      <li>🟡 <strong>Weak Cryptography (CWE-327)</strong>: Deprecated MD5, SHA-1, ECB cipher modes.</li>
+      <li>🟡 <strong>Predictable PRNG (CWE-338)</strong>: Insecure random for auth/session tokens.</li>
+    </ul>
+  </div>
+
+  
+</div>
+{% endblock %}

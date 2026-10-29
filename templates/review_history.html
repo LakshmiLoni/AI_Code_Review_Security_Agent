@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Review History - SentinelAI{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+  <div>
+    <h1 style="font-size: 1.85rem; font-weight: 800;">Review History</h1>
+    <p style="color: var(--text-muted); font-size: 0.95rem;">Audit log of all code reviews executed and persisted in SQLite.</p>
+  </div>
+  <a href="{{ url_for('reviews.new_review') }}" class="btn btn-primary">
+    + New Review
+  </a>
+</div>
+
+<div class="card">
+  {% if reviews %}
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Filename</th>
+            <th>Language</th>
+            <th>Security Score</th>
+            <th>Quality Score</th>
+            <th>Total Findings</th>
+            <th>Status</th>
+            <th>Timestamp</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in reviews %}
+            <tr>
+              <td>
+                <a href="{{ url_for('reviews.review_detail', review_uuid=r.review_uuid) }}" style="font-weight: 600; color: var(--gold-primary); text-decoration: none;">
+                  {{ r.filename }}
+                </a>
+              </td>
+              <td><span class="badge badge-low">{{ r.language }}</span></td>
+              <td>
+                <strong style="color: {% if r.security_score >= 80 %}#16a34a{% elif r.security_score >= 50 %}#d97706{% else %}#dc2626{% endif %};">
+                  {{ r.security_score }}/100
+                </strong>
+              </td>
+              <td><strong>{{ r.quality_score }}/100</strong></td>
+              <td>
+                <span class="badge badge-critical" style="padding: 0.15rem 0.45rem; font-size: 0.75rem;">{{ r.critical_count }} Crit</span>
+                <span class="badge badge-high" style="padding: 0.15rem 0.45rem; font-size: 0.75rem;">{{ r.high_count }} High</span>
+                <span style="font-size: 0.85rem; color: var(--text-muted);">({{ r.total_findings }} total)</span>
+              </td>
+              <td>
+                <span style="font-size: 0.85rem; font-weight: 600;">{{ r.status }}</span>
+              </td>
+              <td style="font-size: 0.85rem; color: var(--text-muted);">{{ r.created_at[:16] }}</td>
+              <td>
+                <div style="display: flex; gap: 0.35rem;">
+                  <a href="{{ url_for('reviews.review_detail', review_uuid=r.review_uuid) }}" class="btn btn-secondary btn-sm" title="Inspect Review">
+                    Inspect
+                  </a>
+                  <a href="{{ url_for('reports.download_json_report', review_uuid=r.review_uuid) }}" class="btn btn-secondary btn-sm" title="Export JSON">
+                    JSON
+                  </a>
+                  <form action="{{ url_for('reviews.delete_review', review_uuid=r.review_uuid) }}" method="POST" onsubmit="return confirm('Delete this review permanently?');" style="display: inline;">
+                    <button type="submit" class="btn btn-secondary btn-sm" style="color: #dc2626; border-color: #fca5a5;" title="Delete">
+                      🗑️
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div style="text-align: center; padding: 3rem 1rem;">
+      <p style="color: var(--text-muted); font-size: 1.05rem; margin-bottom: 1rem;">No historical reviews found in the database.</p>
+      <a href="{{ url_for('reviews.new_review') }}" class="btn btn-primary">Start Your First Code Review</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

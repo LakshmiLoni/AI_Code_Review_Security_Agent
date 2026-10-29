@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}AI Code Review Assistant - SentinelAI{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 1.5rem;">
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <h1 style="font-size: 1.85rem; font-weight: 800;">Conversational Security Assistant</h1>
+      <p style="color: var(--text-muted); font-size: 0.95rem;">
+        Ask questions about your code review findings, secure coding principles, and remediation strategies.
+      </p>
+    </div>
+    <div>
+      {% if llm_configured %}
+        <span class="badge badge-critical" style="background:#dcfce7; color:#15803d; border-color:#86efac; font-size: 0.85rem;">
+          ⚡ Powered by Google Gemini
+        </span>
+      {% else %}
+        <span class="badge badge-medium" style="font-size: 0.85rem;">
+          📚 Local RAG Knowledge Engine Active
+        </span>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="grid-2" style="grid-template-columns: 1fr 340px; align-items: start;">
+  <!-- Chat Main Area -->
+  <div class="card" style="padding: 0; overflow: hidden;">
+    <div style="padding: 0.75rem 1.25rem; background: var(--bg-card-subtle); border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+      <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <span style="font-size: 1.2rem;">🤖</span>
+        <strong>Security Mentor Assistant</strong>
+      </div>
+
+      <!-- Select Review Context -->
+      <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <label for="chat-review-select" style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Context:</label>
+        <select id="chat-review-select" class="form-control" style="padding: 0.25rem 0.5rem; font-size: 0.82rem; width: 170px;">
+          <option value="">General Security Knowledge</option>
+          {% for r in recent_reviews %}
+            <option value="{{ r.review_uuid }}" {% if request.args.get('review_uuid') == r.review_uuid %}selected{% endif %}>
+              {{ r.filename }} ({{ r.created_at[11:16] }})
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <!-- Chat Message Container -->
+    <div class="chat-messages" id="chat-messages" style="height: 440px;">
+      <div class="chat-bubble bubble-assistant">
+        Hello! I am your <strong>AI Security & Code Review Assistant</strong>. 
+        I can explain vulnerability mechanisms (like SQL Injection or Command Injection), break down your review findings, or guide you through safe refactoring patterns.
+        <br><br>
+        <em>Tip: Select a code review above to ask specific questions about your findings, or click one of the quick prompts!</em>
+      </div>
+    </div>
+
+    <!-- Chat Input Form -->
+    <form class="chat-input-bar" id="chat-form">
+      <input type="text" id="chat-input" class="form-control" placeholder="Ask a question about your code or security concepts..." autocomplete="off">
+      <button type="submit" class="btn btn-primary" style="padding: 0.6rem 1.25rem;">
+        Send 🚀
+      </button>
+    </form>
+  </div>
+
+  <!-- Sidebar: Quick Prompts & Knowledge Base Stats -->
+  <div>
+    <div class="card card-gold-accent" style="margin-bottom: 1.5rem;">
+      <h3 style="font-size: 1rem; margin-bottom: 0.75rem; color: #92400e;">💡 Quick Student Prompts</h3>
+      <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <button type="button" class="btn btn-secondary btn-sm quick-prompt-btn" style="text-align: left; justify-content: flex-start;" data-prompt="Why is this code vulnerable?">
+          ❓ Why is this code vulnerable?
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm quick-prompt-btn" style="text-align: left; justify-content: flex-start;" data-prompt="How can I fix this finding?">
+          🔧 How can I fix this finding?
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm quick-prompt-btn" style="text-align: left; justify-content: flex-start;" data-prompt="Explain this code review in simple language.">
+          📖 Explain review in simple language
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm quick-prompt-btn" style="text-align: left; justify-content: flex-start;" data-prompt="What is SQL injection?">
+          💉 What is SQL injection?
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm quick-prompt-btn" style="text-align: left; justify-content: flex-start;" data-prompt="Which issues should I fix first?">
+          🎯 Which issues should I fix first?
+        </button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="font-size: 1rem; margin-bottom: 0.5rem;">Knowledge Base Citations</h3>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+        Responses cite verified sections from the local <strong>{{ kb_stats.nonblank_line_count }}-line</strong> security knowledge base.
+      </p>
+      <div style="font-size: 0.8rem; background: var(--bg-card-subtle); padding: 0.5rem; border-radius: var(--radius-sm);">
+        <div><strong>Status:</strong> Active & Indexed</div>
+        <div><strong>Total Chunks:</strong> {{ kb_stats.total_chunks }}</div>
+        <div><strong>Backend:</strong> {{ kb_stats.backend }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

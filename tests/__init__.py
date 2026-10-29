@@ -1,1 +1,1 @@
-"""Test suite for Milestone 1."""
+"""Test suite package."""

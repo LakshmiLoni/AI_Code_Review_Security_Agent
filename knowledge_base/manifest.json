@@ -1,0 +1,48 @@
+{
+  "name": "AI Code Review & Security Analysis Knowledge Base",
+  "version": "1.0.0",
+  "last_updated": "2026-10-27",
+  "author": "Antigravity Security Engineering Team",
+  "description": "Comprehensive cybersecurity and secure coding knowledge repository for automated code review, static analysis, vulnerability remediation, and student education.",
+  "documents": [
+    {
+      "filename": "secure_coding_knowledge_base.md",
+      "format": "markdown",
+      "topics_count": 25,
+      "minimum_required_lines": 1200,
+      "verified": true
+    },
+    {
+      "filename": "references.md",
+      "format": "markdown",
+      "description": "Authoritative security standards, CWE, NIST, OWASP, and language documentation."
+    }
+  ],
+  "topics": [
+    {"id": 1, "slug": "fundamentals", "title": "Secure Coding Fundamentals", "cwe": "CWE-693", "owasp": "Principles"},
+    {"id": 2, "slug": "owasp-top-10", "title": "OWASP Top 10 Concepts", "cwe": "Taxonomy", "owasp": "Top 10"},
+    {"id": 3, "slug": "python-secure-coding", "title": "Python Secure Coding", "cwe": "CWE-95", "owasp": "A03:2021"},
+    {"id": 4, "slug": "java-secure-coding", "title": "Java Secure Coding", "cwe": "CWE-611", "owasp": "A08:2021"},
+    {"id": 5, "slug": "sql-injection", "title": "SQL Injection and Parameterized Queries", "cwe": "CWE-89", "owasp": "A03:2021"},
+    {"id": 6, "slug": "cross-site-scripting", "title": "Cross-Site Scripting (XSS)", "cwe": "CWE-79", "owasp": "A03:2021"},
+    {"id": 7, "slug": "command-injection", "title": "Command Injection", "cwe": "CWE-78", "owasp": "A03:2021"},
+    {"id": 8, "slug": "authn-authz", "title": "Authentication and Authorization", "cwe": "CWE-287", "owasp": "A01:2021"},
+    {"id": 9, "slug": "password-storage", "title": "Password Storage and Hashing", "cwe": "CWE-916", "owasp": "A02:2021"},
+    {"id": 10, "slug": "secrets-management", "title": "Secret and API-Key Management", "cwe": "CWE-798", "owasp": "A07:2021"},
+    {"id": 11, "slug": "input-validation", "title": "Input Validation and Output Encoding", "cwe": "CWE-20", "owasp": "A03:2021"},
+    {"id": 12, "slug": "file-uploads", "title": "File Upload Security", "cwe": "CWE-434", "owasp": "A04:2021"},
+    {"id": 13, "slug": "path-traversal", "title": "Path Traversal", "cwe": "CWE-22", "owasp": "A01:2021"},
+    {"id": 14, "slug": "unsafe-deserialization", "title": "Unsafe Deserialization", "cwe": "CWE-502", "owasp": "A08:2021"},
+    {"id": 15, "slug": "cryptography", "title": "Cryptography and Weak Algorithms", "cwe": "CWE-327", "owasp": "A02:2021"},
+    {"id": 16, "slug": "secure-randomness", "title": "Secure Random Number Generation", "cwe": "CWE-338", "owasp": "A02:2021"},
+    {"id": 17, "slug": "error-handling-logging", "title": "Error Handling and Logging", "cwe": "CWE-209", "owasp": "A09:2021"},
+    {"id": 18, "slug": "supply-chain-security", "title": "Dependency and Supply-Chain Security", "cwe": "CWE-1395", "owasp": "A06:2021"},
+    {"id": 19, "slug": "api-security", "title": "API Security", "cwe": "CWE-284", "owasp": "API Security Top 10"},
+    {"id": 20, "slug": "database-security", "title": "Secure Database Access", "cwe": "CWE-250", "owasp": "A01:2021"},
+    {"id": 21, "slug": "code-smells", "title": "Code Smells and Maintainability", "cwe": "CWE-1078", "owasp": "A04:2021"},
+    {"id": 22, "slug": "security-testing", "title": "Security Testing and Code Review", "cwe": "CWE-1004", "owasp": "SDLC Verification"},
+    {"id": 23, "slug": "vulnerability-prioritization", "title": "Vulnerability Severity and Prioritization", "cwe": "CWE-1000", "owasp": "Risk Assessment"},
+    {"id": 24, "slug": "remediation-catalog", "title": "Secure Remediation Examples", "cwe": "CWE-657", "owasp": "Remediation"},
+    {"id": 25, "slug": "false-positives", "title": "Common False Positives and Limitations of Static Analysis", "cwe": "CWE-1007", "owasp": "SAST Limits"}
+  ]
+}

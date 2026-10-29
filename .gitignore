@@ -1,49 +1,51 @@
-# Python bytecode and cache
+# Python bytecode
 __pycache__/
-*.py[codz]
+*.py[cod]
 *$py.class
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
-.coverage*
-htmlcov/
+*.so
+.Python
 
 # Virtual environments
-.venv/
 venv/
 env/
 ENV/
+.venv/
 
-# Environment variables and secrets
+# Environment files
 .env
-.env.*
-!.env.example
-.streamlit/secrets.toml
+.env.local
 
-# Project-generated data and vector indexes
-vector_store/
+# Instance & Database files
+instance/*
+!instance/.gitkeep
+data/*.db
+data/*.sqlite
+!data/.gitkeep
 
-# Python packaging and build files
-*.egg-info/
-build/
-dist/
-.eggs/
-wheels/
-pip-wheel-metadata/
-MANIFEST
+# Uploads & Reports generated at runtime
+uploads/*
+!uploads/.gitkeep
+reports/*
+!reports/.gitkeep
 
-# IDE and editor settings
+# Local Vector Store indices
+chroma_db/*
+!chroma_db/.gitkeep
+
+# IDEs
+.vscode/
 .idea/
-.vscode/*
-!.vscode/settings.json
+*.sublime-project
+*.sublime-workspace
 
-# Logs and temporary files
-*.log
-tempCodeRunnerFile.py
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
 
-# Jupyter
-.ipynb_checkpoints/
+# Generated project archive
+AI_Code_Review_Security_Agent.zip
 
-# OS files
-.DS_Store
-Thumbs.db
+# Generated vector database files
+chroma_db/*
+!chroma_db/.gitkeep

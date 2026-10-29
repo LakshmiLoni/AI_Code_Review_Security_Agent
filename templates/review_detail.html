@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block title %}Review Detail: {{ review.filename }} - SentinelAI{% endblock %}
+
+{% block content %}
+<!-- Header Bar -->
+<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+  <div>
+    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.25rem;">
+      <h1 style="font-size: 1.85rem; font-weight: 800;">{{ review.filename }}</h1>
+      <span class="badge badge-low">{{ review.language }}</span>
+      <span class="badge {% if 'Critical' in review.status or 'High' in review.status %}badge-critical{% elif 'Moderate' in review.status %}badge-medium{% else %}badge-low{% endif %}">
+        {{ review.status }}
+      </span>
+    </div>
+    <p style="color: var(--text-muted); font-size: 0.85rem;">
+      Review UUID: <code>{{ review.review_uuid }}</code> | Analyzed on {{ review.created_at[:16] }}
+    </p>
+  </div>
+
+  <div style="display: flex; gap: 0.5rem; align-items: center;">
+    <a href="{{ url_for('reports.download_json_report', review_uuid=review.review_uuid) }}" class="btn btn-secondary btn-sm">
+      📥 Export JSON
+    </a>
+    <a href="{{ url_for('reports.download_markdown_report', review_uuid=review.review_uuid) }}" class="btn btn-secondary btn-sm">
+      📥 Export Markdown
+    </a>
+    <a href="{{ url_for('assistant.assistant_ui') }}?review_uuid={{ review.review_uuid }}" class="btn btn-primary btn-sm">
+      💬 Ask AI Assistant
+    </a>
+  </div>
+</div>
+
+<!-- Score Cards -->
+<div class="grid-4" style="margin-bottom: 1.5rem;">
+  <div class="card stat-card" style="border-top: 4px solid {% if review.security_score >= 80 %}#16a34a{% elif review.security_score >= 50 %}#d97706{% else %}#dc2626{% endif %};">
+    <span class="stat-label">Security Score</span>
+    <span class="stat-value" style="color: {% if review.security_score >= 80 %}#16a34a{% elif review.security_score >= 50 %}#d97706{% else %}#dc2626{% endif %};">
+      {{ review.security_score }}/100
+    </span>
+    <span class="stat-footer">{{ review.critical_count }} Critical / {{ review.high_count }} High</span>
+  </div>
+
+  <div class="card stat-card" style="border-top: 4px solid #3b82f6;">
+    <span class="stat-label">Quality Score</span>
+    <span class="stat-value" style="color: #1d4ed8;">{{ review.quality_score }}/100</span>
+    <span class="stat-footer">{{ review.quality_findings|length }} Maintainability Issues</span>
+  </div>
+
+  <div class="card stat-card" style="border-top: 4px solid #ef4444;">
+    <span class="stat-label">Critical Vulnerabilities</span>
+    <span class="stat-value" style="color: #b91c1c;">{{ review.critical_count }}</span>
+    <span class="stat-footer">Immediate SLA 24 hours</span>
+  </div>
+
+  <div class="card stat-card" style="border-top: 4px solid #6b7280;">
+    <span class="stat-label">Total Code Findings</span>
+    <span class="stat-value">{{ review.total_findings }}</span>
+    <span class="stat-footer">Security + Quality issues</span>
+  </div>
+</div>
+
+<!-- Executive Summary and Residual Risks -->
+<div class="card card-gold-accent" style="margin-bottom: 2rem;">
+  <h3 style="font-size: 1.15rem; margin-bottom: 0.5rem; color: #92400e;">Executive Summary</h3>
+  <p style="font-size: 0.95rem; line-height: 1.6; margin-bottom: 1rem;">
+    {{ review.summary_text }}
+  </p>
+
+  {% if review.metrics and review.metrics.remaining_risks %}
+    <div style="background: #fdfbf7; border: 1px solid var(--gold-border); border-radius: var(--radius-sm); padding: 0.85rem; margin-top: 0.75rem;">
+      <h4 style="font-size: 0.9rem; color: #b45309; margin-bottom: 0.4rem;">⚠️ Residual Security Risks & Static Limitations:</h4>
+      <ul style="font-size: 0.85rem; color: var(--text-muted); padding-left: 1.25rem;">
+        {% for risk in review.metrics.remaining_risks %}
+          <li>{{ risk }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  <p style="font-size: 0.78rem; color: #9ca3af; margin-top: 0.75rem; font-style: italic;">
+    {{ review.metrics.get("disclaimer", "") }}
+  </p>
+</div>
+
+<!-- Findings Tabs -->
+<div class="card" style="padding: 0; overflow: hidden; margin-bottom: 2rem;">
+  <div style="display: flex; border-bottom: 1px solid var(--border-subtle); background: var(--bg-card-subtle);">
+    <button type="button" class="tab-btn active" onclick="switchTab('security-tab')" id="tab-btn-security" style="padding: 0.85rem 1.5rem; font-weight: 700; border: none; background: transparent; cursor: pointer; border-bottom: 3px solid var(--gold-primary);">
+      🛡️ Security Findings ({{ review.security_findings|length }})
+    </button>
+    <button type="button" class="tab-btn" onclick="switchTab('quality-tab')" id="tab-btn-quality" style="padding: 0.85rem 1.5rem; font-weight: 700; border: none; background: transparent; cursor: pointer; border-bottom: 3px solid transparent; color: var(--text-muted);">
+      🔬 Code Quality ({{ review.quality_findings|length }})
+    </button>
+    <button type="button" class="tab-btn" onclick="switchTab('source-tab')" id="tab-btn-source" style="padding: 0.85rem 1.5rem; font-weight: 700; border: none; background: transparent; cursor: pointer; border-bottom: 3px solid transparent; color: var(--text-muted);">
+      📄 Full Source Code
+    </button>
+  </div>
+
+  <!-- TAB 1: Security Findings -->
+  <div id="security-tab" class="tab-content" style="padding: 1.5rem;">
+    {% if review.security_findings %}
+      {% for f in review.security_findings %}
+        <div style="border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 1.25rem; margin-bottom: 1.5rem; background: #ffffff;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <span class="badge badge-{{ f.severity|lower }}">{{ f.severity }}</span>
+              <strong style="font-size: 1.05rem;">{{ f.title }}</strong>
+            </div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">
+              Rule: <code>{{ f.rule_id }}</code> | Line {{ f.line_number }}
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 0.75rem; font-size: 0.82rem; margin-bottom: 0.75rem; color: #4b5563;">
+            {% if f.cwe_id %}<span><strong>CWE:</strong> {{ f.cwe_id }}</span> •{% endif %}
+            {% if f.owasp_category %}<span><strong>OWASP:</strong> {{ f.owasp_category }}</span> •{% endif %}
+            {% if f.kb_reference %}<span><strong>Reference:</strong> {{ f.kb_reference }}</span>{% endif %}
+          </div>
+
+          <p style="font-size: 0.92rem; margin-bottom: 0.5rem;"><strong>Analysis:</strong> {{ f.explanation }}</p>
+          <p style="font-size: 0.88rem; color: #b91c1c; margin-bottom: 0.75rem;"><strong>Why It Matters:</strong> {{ f.why_it_matters }}</p>
+
+          <!-- Side-by-side Diff -->
+          <div class="diff-container">
+            <div class="diff-box">
+              <div class="diff-header insecure">❌ Insecure Code (Line {{ f.line_number }})</div>
+              <pre class="diff-code"><code>{{ f.code_snippet }}</code></pre>
+            </div>
+            <div class="diff-box">
+              <div class="diff-header secure">✅ Suggested Remediation Pattern</div>
+              <pre class="diff-code" style="background: #f0fdf4; border-color: #bbf7d0;"><code>{{ f.remediated_code }}</code></pre>
+            </div>
+          </div>
+
+          <p style="font-size: 0.85rem; color: #047857; margin-bottom: 0.4rem;">
+            <strong>Recommended Fix:</strong> {{ f.remediation }}
+          </p>
+          <div style="font-size: 0.75rem; color: #6b7280; font-style: italic;">
+            ⚠️ Label: Automated AI recommendation requiring human engineering review before deployment.
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div style="text-align: center; padding: 2rem; color: #16a34a;">
+        <h3>🎉 No Security Vulnerabilities Detected!</h3>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.5rem;">
+          No standard injection, credential, or cryptographic flaws matched our static rule catalog.
+        </p>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- TAB 2: Quality Findings -->
+  <div id="quality-tab" class="tab-content" style="display: none; padding: 1.5rem;">
+    {% if review.quality_findings %}
+      {% for q in review.quality_findings %}
+        <div style="border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 1rem; margin-bottom: 1rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <span class="badge badge-quality">{{ q.severity }}</span>
+              <strong>{{ q.title }}</strong>
+            </div>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Line {{ q.line_number }} ({{ q.rule_id }})</span>
+          </div>
+          <p style="font-size: 0.9rem; margin-bottom: 0.4rem;">{{ q.explanation }}</p>
+          <pre style="background: #f8fafc; padding: 0.5rem; border-radius: 4px; font-size: 0.85rem; font-family: var(--font-mono); margin-bottom: 0.5rem;"><code>{{ q.code_snippet }}</code></pre>
+          <p style="font-size: 0.85rem; color: #4338ca;"><strong>Remediation:</strong> {{ q.remediation }}</p>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div style="text-align: center; padding: 2rem; color: #16a34a;">
+        <h3>✨ Code Quality Clean</h3>
+        <p style="font-size: 0.9rem; color: var(--text-muted);">No major code smells or maintainability defects identified.</p>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- TAB 3: Full Source Code View -->
+  <div id="source-tab" class="tab-content" style="display: none; padding: 1.5rem;">
+    <pre style="background: #1e293b; color: #f8fafc; padding: 1.25rem; border-radius: var(--radius-sm); overflow-x: auto; font-family: var(--font-mono); font-size: 0.85rem; line-height: 1.5;"><code>{{ review.source_code }}</code></pre>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function switchTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.style.borderBottomColor = 'transparent';
+      btn.style.color = '#4b5563';
+    });
+
+    const target = document.getElementById(tabId);
+    if (target) target.style.display = 'block';
+
+    const btnId = 'tab-btn-' + tabId.replace('-tab', '');
+    const activeBtn = document.getElementById(btnId);
+    if (activeBtn) {
+      activeBtn.style.borderBottomColor = '#d97706';
+      activeBtn.style.color = '#1f2937';
+    }
+  }
+</script>
+{% endblock %}
