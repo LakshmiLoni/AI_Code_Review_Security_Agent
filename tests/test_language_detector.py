@@ -1,102 +1,73 @@
-import pytest
+"""Tests for utils/language_detector.py."""
+from utils.language_detector import detect_language, UnsupportedLanguageError
 
-from submission.language_detector import detect_for_file, detect_language
 
-PYTHON_SNIPPET = '''
-import os
+def test_detect_python_by_extension():
+    code = "x = 10"
+    lang, conf, reason = detect_language(code, filename="main.py")
+    assert lang == "python"
+    assert conf == 1.0
 
-def greet(name):
-    if name:
-        print(f"Hello {name}")
-    else:
-        print("Hello")
 
-class Greeter:
-    def __init__(self):
-        self.count = 0
-'''
+def test_detect_java_by_extension():
+    code = "int x = 10;"
+    lang, conf, reason = detect_language(code, filename="App.java")
+    assert lang == "java"
+    assert conf == 1.0
 
-JAVA_SNIPPET = '''
-package demo;
+
+def test_reject_unsupported_extension():
+    raised = False
+    try:
+        detect_language("cout << 'hello';", filename="program.cpp")
+    except UnsupportedLanguageError as exc:
+        raised = True
+        assert "Unsupported file format" in str(exc)
+    assert raised, "Expected UnsupportedLanguageError was not raised"
+
+
+def test_detect_pasted_python_code():
+    code = """
+def calculate_metrics(items):
+    total = 0
+    for item in items:
+        total += item
+    return total
+
+if __name__ == '__main__':
+    print(calculate_metrics([1, 2, 3]))
+"""
+    lang, conf, reason = detect_language(code)
+    assert lang == "python"
+    assert conf >= 0.70
+
+
+def test_detect_pasted_java_code():
+    code = """
+package com.example.service;
 
 import java.util.List;
 
-public class Hello {
-    private int count = 0;
-
-    public static void main(String[] args) {
-        System.out.println("Hello");
+public class MetricService {
+    public int calculateMetrics(List<Integer> items) {
+        int total = 0;
+        for (int item : items) {
+            total += item;
+        }
+        System.out.println("Total: " + total);
+        return total;
     }
 }
-'''
+"""
+    lang, conf, reason = detect_language(code)
+    assert lang == "java"
+    assert conf >= 0.70
 
 
-def test_detects_python():
-    result = detect_language(PYTHON_SNIPPET)
-    assert result.language == "python"
-    assert result.is_confident
-    assert result.confidence >= 0.65
-
-
-def test_detects_java():
-    result = detect_language(JAVA_SNIPPET)
-    assert result.language == "java"
-    assert result.is_confident
-
-
-def test_short_python_function_detected():
-    assert detect_language("def add(a, b):\n    return a + b\n").language == "python"
-
-
-def test_short_java_statement_detected():
-    code = 'public class A {\n    void f() {\n        System.out.println("x");\n    }\n}\n'
-    assert detect_language(code).language == "java"
-
-
-def test_invalid_python_still_detected_as_python():
-    assert detect_language("def broken(name\n    print('x')\n").language == "python"
-
-
-@pytest.mark.parametrize("text", ["", "   ", "\n\n\t"])
-def test_empty_input_not_detected(text):
-    result = detect_language(text)
-    assert result.language is None
-    assert result.confidence == 0.0
-
-
-@pytest.mark.parametrize("text", ["hello world", "x = 1", "just some plain english sentence here", "42"])
-def test_ambiguous_input_not_detected(text):
-    result = detect_language(text)
-    assert result.language is None
-    assert "clearer" in result.message or "No code" in result.message
-
-
-def test_mixed_code_is_ambiguous():
-    mixed = "def f():\n    pass\n" + "public class A {\n}\nSystem.out.println(1);\n"
-    result = detect_language(mixed)
-    # Either clearly one language or refuses; must never claim high confidence for a coin-flip.
-    assert result.language is None or result.confidence < 0.9
-
-
-def test_extension_confirms_content():
-    result = detect_for_file(PYTHON_SNIPPET, "tool.py")
-    assert result.language == "python"
-    assert not result.mismatch
-    assert result.confidence >= 0.85
-
-
-def test_extension_trusted_for_short_content():
-    result = detect_for_file("x = 1\n", "tiny.py")
-    assert result.language == "python"
-
-
-def test_extension_mismatch_detected():
-    result = detect_for_file(JAVA_SNIPPET, "script.py")
-    assert result.mismatch
-    assert result.language is None
-    assert "Java" in result.message
-
-
-def test_unknown_extension_falls_back_to_content():
-    result = detect_for_file(JAVA_SNIPPET, "notes.txt")
-    assert result.language == "java"
+def test_empty_code_raises_error():
+    raised = False
+    try:
+        detect_language("   ")
+    except UnsupportedLanguageError:
+        raised = True
+    assert raised, "Expected UnsupportedLanguageError on empty code"

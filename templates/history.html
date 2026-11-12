@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% set active_page = "history" %}
+
+{% block content %}
+<div class="row g-3">
+  <div class="col-12 d-flex justify-content-between align-items-center">
+    <div>
+      <h4 class="fw-bold mb-0" style="color: var(--text-dark);">Code Review History</h4>
+      <p class="small mb-0" style="color: var(--text-secondary);">Audit log of all processed code analysis sessions</p>
+    </div>
+    <a href="{{ url_for('submit') }}" class="btn btn-primary btn-sm px-3 shadow-sm">
+      <i class="bi bi-plus-lg me-1"></i> New Review
+    </a>
+  </div>
+
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Review ID</th>
+                <th>File Name</th>
+                <th>Language</th>
+                <th>Health Score</th>
+                <th>PR Verdict</th>
+                <th>Findings Breakdown</th>
+                <th>Date &amp; Time</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if reviews %}
+                {% for r in reviews %}
+                <tr>
+                  <td><code style="color: var(--primary-dark);">{{ r.review_id }}</code></td>
+                  <td><strong style="color: var(--text-dark);">{{ r.filename }}</strong></td>
+                  <td>
+                    <span class="badge badge-orange">
+                      {{ r.detected_language|capitalize }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="fw-bold {% if r.health_score >= 80 %}text-success{% elif r.health_score >= 60 %}text-warning{% else %}text-danger{% endif %}">
+                      {{ r.health_score }}% ({{ r.letter_grade }})
+                    </span>
+                  </td>
+                  <td>
+                    {% if r.pr_status == 'Approved' %}
+                      <span class="badge badge-pr-approved">Approved</span>
+                    {% elif r.pr_status == 'Changes Requested' %}
+                      <span class="badge badge-pr-changes">Changes Requested</span>
+                    {% else %}
+                      <span class="badge badge-pr-suggestions">Approved w/ Suggestions</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <span class="badge badge-critical" title="Critical">{{ r.critical_count }}</span>
+                    <span class="badge badge-high" title="High">{{ r.high_count }}</span>
+                    <span class="badge badge-medium" title="Medium">{{ r.medium_count }}</span>
+                    <span class="badge badge-low" title="Low">{{ r.low_count }}</span>
+                  </td>
+                  <td class="small" style="color: var(--text-secondary);">{{ r.timestamp }}</td>
+                  <td class="text-end">
+                    <div class="btn-group btn-group-sm">
+                      <a href="{{ url_for('results', review_id=r.review_id) }}" class="btn btn-outline-primary" title="View Review">
+                        <i class="bi bi-eye"></i>
+                      </a>
+                      <a href="{{ url_for('findings_view', review_id=r.review_id) }}" class="btn btn-outline-secondary" title="View Findings">
+                        <i class="bi bi-list-check"></i>
+                      </a>
+                      <a href="{{ url_for('export_report', review_id=r.review_id, format='pdf') }}" class="btn btn-outline-secondary" title="Download PDF">
+                        <i class="bi bi-file-earmark-pdf text-danger"></i>
+                      </a>
+                      <a href="{{ url_for('export_report', review_id=r.review_id, format='json') }}" class="btn btn-outline-secondary" title="Export JSON">
+                        <i class="bi bi-filetype-json" style="color: var(--primary);"></i>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              {% else %}
+                <tr>
+                  <td colspan="8" class="text-center py-5" style="color: var(--text-secondary);">
+                    <i class="bi bi-inbox fs-2 d-block mb-2 text-secondary"></i>
+                    No historical reviews found. Submit code above to run an analysis.
+                  </td>
+                </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

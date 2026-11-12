@@ -1,112 +1,87 @@
-"""Test suite for Security Vulnerability Detection Agent."""
-
-import unittest
-import sys
-from pathlib import Path
-
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(PROJECT_ROOT))
-
-from app.services.code_parser import CodeParser
-from app.agents.security_agent import SecurityAgent
+"""Tests for agents/security_agent.py."""
+from agents.security_agent import SecurityAgent
 
 
-class TestSecurityAgent(unittest.TestCase):
-    def setUp(self):
-        self.parser = CodeParser()
-        self.agent = SecurityAgent()
-
-    def test_sql_injection_detection(self):
-        code = """
-import sqlite3
-def get_user(uid):
-    cursor = conn.cursor()
-    cursor.execute(f"SELECT * FROM users WHERE id = '{uid}'")
+def test_python_sql_injection_detection():
+    agent = SecurityAgent()
+    code = """
+def get_user(cursor, username):
+    query = f"SELECT * FROM users WHERE username = '{username}'"
+    cursor.execute(query)
+    return cursor.fetchone()
 """
-        parsed = self.parser.parse(code, language="python")
-        findings = self.agent.analyze(parsed)
-        rule_ids = [f["rule_id"] for f in findings]
-        self.assertIn("SEC-SQL-01", rule_ids)
-        self.assertEqual(findings[0]["severity"], "Critical")
+    findings = agent.analyze(code, language="python", filename="db.py")
+    sqli = [f for f in findings if "SQL Injection" in f["title"]]
+    assert len(sqli) >= 1
+    assert sqli[0]["severity"] == "CRITICAL"
+    assert "A03:2021" in sqli[0]["category"]
 
-    def test_command_injection_detection(self):
-        code = """
+
+def test_python_command_injection():
+    agent = SecurityAgent()
+    code = """
 import os
-def ping(host):
-    os.system("ping -c 1 " + host)
-"""
-        parsed = self.parser.parse(code, language="python")
-        findings = self.agent.analyze(parsed)
-        rule_ids = [f["rule_id"] for f in findings]
-        self.assertIn("SEC-CMD-01", rule_ids)
 
-    def test_eval_code_execution_detection(self):
-        code = """
-def run_math(user_expr):
-    return eval(user_expr)
+def backup(folder):
+    os.system(f"tar -czf backup.tar.gz {folder}")
 """
-        parsed = self.parser.parse(code, language="python")
-        findings = self.agent.analyze(parsed)
-        rule_ids = [f["rule_id"] for f in findings]
-        self.assertIn("SEC-EVAL-01", rule_ids)
+    findings = agent.analyze(code, language="python", filename="backup.py")
+    cmdi = [f for f in findings if "Command Injection" in f["title"]]
+    assert len(cmdi) >= 1
+    assert cmdi[0]["severity"] == "CRITICAL"
 
-    def test_pickle_deserialization_detection(self):
-        code = """
+
+def test_python_insecure_deserialization():
+    agent = SecurityAgent()
+    code = """
 import pickle
-def restore(b):
-    return pickle.loads(b)
-"""
-        parsed = self.parser.parse(code, language="python")
-        findings = self.agent.analyze(parsed)
-        rule_ids = [f["rule_id"] for f in findings]
-        self.assertIn("SEC-DESER-01", rule_ids)
 
-    def test_hardcoded_secret_detection(self):
-        code = """
-AWS_ACCESS_KEY_ID = "YOUR_AWS_ACCESS_KEY_ID"
-API_KEY = "YOUR_API_KEY"
+def parse_session(token):
+    return pickle.loads(token)
 """
-        parsed = self.parser.parse(code, language="python")
-        findings = self.agent.analyze(parsed)
-        rule_ids = [f["rule_id"] for f in findings]
-        self.assertTrue(any("SECRET" in r for r in rule_ids))
+    findings = agent.analyze(code, language="python", filename="auth.py")
+    deserial = [f for f in findings if "Deserialization" in f["title"]]
+    assert len(deserial) >= 1
+    assert deserial[0]["severity"] == "CRITICAL"
 
-    def test_weak_cryptography_md5(self):
-        code = """
-import hashlib
-def hash_pass(pwd):
-    return hashlib.md5(pwd.encode()).hexdigest()
-"""
-        parsed = self.parser.parse(code, language="python")
-        findings = self.agent.analyze(parsed)
-        rule_ids = [f["rule_id"] for f in findings]
-        self.assertIn("SEC-CRYPTO-01", rule_ids)
 
-    def test_insecure_randomness_token(self):
-        code = """
-import random
-def generate_auth_token():
-    return str(random.randint(100000, 999999))
-"""
-        parsed = self.parser.parse(code, language="python")
-        findings = self.agent.analyze(parsed)
-        rule_ids = [f["rule_id"] for f in findings]
-        self.assertIn("SEC-RAND-01", rule_ids)
+def test_java_sql_injection():
+    agent = SecurityAgent()
+    code = """
+import java.sql.*;
 
-    def test_java_sql_injection(self):
-        code = """
-public class AccountDAO {
-    public void query(Connection conn, String id) throws Exception {
+public class UserAuth {
+    public void queryUser(Connection conn, String user) throws SQLException {
         Statement stmt = conn.createStatement();
-        stmt.executeQuery("SELECT * FROM accounts WHERE id = " + id);
+        String sql = "SELECT * FROM accounts WHERE name = '" + user + "'";
+        ResultSet rs = stmt.executeQuery(sql);
     }
 }
 """
-        parsed = self.parser.parse(code, language="java")
-        findings = self.agent.analyze(parsed)
-        rule_ids = [f["rule_id"] for f in findings]
-        self.assertIn("SEC-JAVA-SQL-01", rule_ids)
+    findings = agent.analyze(code, language="java", filename="UserAuth.java")
+    sqli = [f for f in findings if "SQL Injection" in f["title"]]
+    assert len(sqli) >= 1
+    assert sqli[0]["severity"] == "CRITICAL"
 
 
-if __name__ == "__main__":
-    unittest.main()
+def test_hardcoded_aws_secret():
+    agent = SecurityAgent()
+    code = """
+AWS_KEY = "AKIAIOSFODNN7EXAMPLE"
+"""
+    findings = agent.analyze(code, language="python", filename="cloud.py")
+    secrets = [f for f in findings if "AWS Access Key" in f["title"]]
+    assert len(secrets) >= 1
+    assert secrets[0]["severity"] == "CRITICAL"
+
+
+def test_secure_parameterized_query_avoids_false_positive():
+    agent = SecurityAgent()
+    code = """
+def get_user_secure(cursor, username):
+    cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
+    return cursor.fetchone()
+"""
+    findings = agent.analyze(code, language="python", filename="secure_db.py")
+    sqli = [f for f in findings if "SQL Injection" in f["title"]]
+    assert len(sqli) == 0

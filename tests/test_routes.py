@@ -1,84 +1,75 @@
-"""Test suite for Flask Web Routes and Endpoints."""
-
-import unittest
-import sys
-from pathlib import Path
-
-# Add project root to path
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(PROJECT_ROOT))
-
+"""Tests for Flask web routes and API endpoints."""
 from app import create_app
-from app.config import Config
 
 
-class TestWebRoutes(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        # Configure app in testing mode with temporary test database
-        cls.test_config = Config()
-        cls.test_config.DATABASE_PATH = PROJECT_ROOT / "data" / "test_reviews.db"
-        cls.app = create_app(cls.test_config)
-        cls.client = cls.app.test_client()
+def test_public_routes_status_code_200():
+    app = create_app()
+    client = app.test_client()
 
-    def test_home_page(self):
-        """Verify home page loads successfully with 200 OK."""
-        response = self.client.get("/")
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b"AI Code Review", response.data)
-
-    def test_dashboard_page(self):
-        """Verify dashboard route loads with metrics and charts."""
-        response = self.client.get("/dashboard")
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b"Security Operations Dashboard", response.data)
-
-    def test_new_review_page(self):
-        """Verify new review submission form loads."""
-        response = self.client.get("/reviews/new")
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b"Submit Code for Review", response.data)
-
-    def test_code_submission_and_detail(self):
-        """Verify submitting code creates a review and redirects to detail page."""
-        test_code = """
-import os
-def run_command(cmd):
-    os.system(cmd)
-"""
-        response = self.client.post("/reviews/submit", data={
-            "source_code": test_code,
-            "filename": "test_cmd.py",
-            "language": "python"
-        }, follow_redirects=True)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b"test_cmd", response.data)
-        self.assertIn(b"Command Injection Risk", response.data)
-
-    def test_review_history_page(self):
-        """Verify review history renders."""
-        response = self.client.get("/reviews/history")
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b"Review History", response.data)
-
-    def test_assistant_chat_api(self):
-        """Verify conversational assistant chat API responds properly."""
-        payload = {"question": "What is SQL injection?", "review_uuid": ""}
-        response = self.client.post("/assistant/chat", json=payload)
-        self.assertEqual(response.status_code, 200)
-        data = response.get_json()
-        self.assertIn("response", data)
-        self.assertIn("SQL", data["response"])
-
-    def test_api_kb_stats(self):
-        """Verify /api/kb/stats endpoint returns line count >= 1200."""
-        response = self.client.get("/api/kb/stats")
-        self.assertEqual(response.status_code, 200)
-        data = response.get_json()
-        self.assertGreaterEqual(data["nonblank_line_count"], 1200)
-        self.assertTrue(data["meets_requirement"])
+    for endpoint in ["/", "/dashboard", "/submit", "/assistant", "/history"]:
+        res = client.get(endpoint)
+        assert res.status_code == 200, f"Route {endpoint} returned {res.status_code}"
 
 
-if __name__ == "__main__":
-    unittest.main()
+def test_language_detection_api():
+    app = create_app()
+    client = app.test_client()
+
+    payload = {"code": "def process_data(items):\n    return [x * 2 for x in items]"}
+    res = client.post("/api/detect-language", json=payload)
+    assert res.status_code == 200
+    data = res.get_json()
+    assert data["success"] is True
+    assert data["language"] == "python"
+
+
+def test_chat_api_fallback_response():
+    app = create_app()
+    client = app.test_client()
+
+    payload = {"question": "How can I prevent SQL injection in Python?"}
+    res = client.post("/api/chat", json=payload)
+    assert res.status_code == 200
+    data = res.get_json()
+    assert data["success"] is True
+    assert "answer" in data
+    assert len(data.get("citations", [])) > 0
+
+
+def test_submit_flow_and_exports():
+    app = create_app()
+    client = app.test_client()
+
+    code_snippet = (
+        "import os\n"
+        "import hashlib\n"
+        "def authenticate(u, p):\n"
+        "    h = hashlib.md5(p.encode()).hexdigest()\n"
+        "    os.system('echo user ' + u)\n"
+        "    return h\n"
+    )
+
+    # 1. Post submission
+    sub_res = client.post(
+        "/submit",
+        data={"submission_type": "paste", "code_content": code_snippet},
+        follow_redirects=True,
+    )
+    assert sub_res.status_code == 200
+    review_id = sub_res.request.path.split("/")[-1]
+    assert review_id.startswith("REV-")
+
+    # 2. Results, Findings, and Remediation views
+    for path in [f"/results/{review_id}", f"/findings/{review_id}", f"/remediation/{review_id}"]:
+        view_res = client.get(path)
+        assert view_res.status_code == 200
+
+    # 3. PDF Export
+    pdf_res = client.get(f"/export/{review_id}/pdf")
+    assert pdf_res.status_code == 200
+    assert pdf_res.data.startswith(b"%PDF")
+
+    # 4. JSON Export
+    json_res = client.get(f"/export/{review_id}/json")
+    assert json_res.status_code == 200
+    assert b"AI Code Review" in json_res.data
