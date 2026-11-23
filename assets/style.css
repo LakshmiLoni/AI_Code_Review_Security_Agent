@@ -1,0 +1,138 @@
+/* AI Code Review & Security Analysis Agent - Professional Theme */
+/* Color Palette: Warm White (#FDFBF7), Content White (#FFFFFF), Sage Green (#5F8670), Teal (#0D9488), Dark Grey (#2D3748) */
+
+:root {
+  --bg-app: #fdfbf7;
+  --bg-card: #ffffff;
+  --text-main: #2d3748;
+  --text-muted: #718096;
+  --border-subtle: #e2e8f0;
+  
+  --sage-green: #5f8670;
+  --sage-green-light: #f0f5f2;
+  --teal-accent: #0d9488;
+  --teal-light: #f0fdfa;
+  
+  --crit-red: #dc2626;
+  --crit-bg: #fef2f2;
+  --high-orange: #ea580c;
+  --high-bg: #fff7ed;
+  --med-amber: #d97706;
+  --med-bg: #fffbeb;
+  --low-blue: #2563eb;
+  --low-bg: #eff6ff;
+}
+
+/* Background overrides */
+.stApp {
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Application Header Banner */
+.app-header {
+  background-color: #ffffff;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.app-title {
+  color: #1a202c;
+  font-size: 1.45rem;
+  font-weight: 700;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.app-subtitle {
+  color: #718096;
+  font-size: 0.88rem;
+  margin-top: 4px;
+}
+
+/* Content Panel Card */
+.content-card {
+  background-color: #ffffff;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 18px 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+/* Metric Display Cards */
+.metric-box {
+  background-color: #ffffff;
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 12px 14px;
+  text-align: left;
+}
+
+.metric-box.critical { border-left: 3px solid var(--crit-red); }
+.metric-box.high { border-left: 3px solid var(--high-orange); }
+.metric-box.medium { border-left: 3px solid var(--med-amber); }
+.metric-box.low { border-left: 3px solid var(--low-blue); }
+.metric-box.health { border-left: 3px solid var(--sage-green); }
+
+.metric-title {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.metric-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-top: 2px;
+}
+
+/* Severity Badges */
+.badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-critical { background-color: var(--crit-bg); color: var(--crit-red); border: 1px solid #fecaca; }
+.badge-high { background-color: var(--high-bg); color: var(--high-orange); border: 1px solid #fed7aa; }
+.badge-medium { background-color: var(--med-bg); color: var(--med-amber); border: 1px solid #fef08a; }
+.badge-low { background-color: var(--low-bg); color: var(--low-blue); border: 1px solid #bfdbfe; }
+.badge-sage { background-color: var(--sage-green-light); color: var(--sage-green); border: 1px solid #c7dcce; }
+.badge-teal { background-color: var(--teal-light); color: var(--teal-accent); border: 1px solid #99f6e4; }
+
+/* Status Badges */
+.status-approved { background-color: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; font-weight: 700; padding: 4px 10px; border-radius: 4px; }
+.status-suggestions { background-color: #fefce8; color: #ca8a04; border: 1px solid #fef08a; font-weight: 700; padding: 4px 10px; border-radius: 4px; }
+.status-changes { background-color: #fef2f2; color: #dc2626; border: 1px solid #fecaca; font-weight: 700; padding: 4px 10px; border-radius: 4px; }
+
+/* Custom Streamlit component adjustments */
+div[data-testid="stSidebar"] {
+  background-color: #faf9f6;
+  border-right: 1px solid var(--border-subtle);
+}
+
+div[data-testid="stSidebar"] h1, 
+div[data-testid="stSidebar"] h2, 
+div[data-testid="stSidebar"] h3 {
+  color: var(--text-main);
+}
+
+.sidebar-note {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 12px;
+  margin-top: 20px;
+}

@@ -1,0 +1,58 @@
+
+{% extends "base.html" %}
+{% set active_page = "index" %}
+
+{% block content %}
+<div class="row justify-content-center py-5">
+  <div class="col-lg-10">
+
+    <!-- Clean Homepage Hero -->
+    <div class="card border-0 shadow-sm p-4 p-md-5 text-center"
+         style="border-radius: 16px; background: #FFFFFF;">
+
+      <div class="mb-3">
+        <span class="badge px-3 py-2"
+              style="background: #FFF7ED; color: #EA580C; border-radius: 20px;">
+          <i class="bi bi-shield-check me-1"></i>
+          
+        </span>
+      </div>
+
+      <h1 class="display-5 fw-bold mb-3"
+          style="color: #262626; letter-spacing: -1px;">
+        AI Code Review &amp;<br>
+        <span style="color: #F97316;">Security Analysis</span>
+      </h1>
+
+      <p class="fs-6 mb-4"
+         style="color: #737373;">
+        AI-powered code quality and security analysis.
+      </p>
+
+      <!-- Main Actions -->
+      <div class="d-flex justify-content-center gap-3 flex-wrap">
+
+        <a href="{{ url_for('submit') }}"
+           class="btn btn-primary px-4 py-2">
+          <i class="bi bi-code-square me-2"></i>
+          Submit Code
+        </a>
+
+        <a href="{{ url_for('dashboard') }}"
+           class="btn btn-outline-secondary px-4 py-2">
+          <i class="bi bi-speedometer2 me-2"></i>
+          Dashboard
+        </a>
+
+        <a href="{{ url_for('assistant') }}"
+           class="btn btn-outline-primary px-4 py-2">
+          <i class="bi bi-chat-dots me-2"></i>
+          AI Assistant
+        </a>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

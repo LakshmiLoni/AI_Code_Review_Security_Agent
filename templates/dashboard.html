@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+{% set active_page = "dashboard" %}
+
+{% block content %}
+<div class="row g-3 mb-4">
+  <div class="col-12 d-flex justify-content-between align-items-center">
+    <div>
+      <h4 class="fw-bold mb-0" style="color: var(--text-dark);">Developer Portal Dashboard</h4>
+      <p class="small mb-0" style="color: var(--text-secondary);">Unified vulnerability intelligence &amp; code quality metrics</p>
+    </div>
+    <a href="{{ url_for('submit') }}" class="btn btn-primary btn-sm px-3 shadow-sm">
+      <i class="bi bi-plus-lg me-1"></i> Submit Code for Review
+    </a>
+  </div>
+</div>
+
+<!-- 6 Metric Cards Grid (White Cards, Left Accent Borders) -->
+<div class="row g-3 mb-4">
+  <div class="col-sm-6 col-lg-2">
+    <div class="card metric-card h-100">
+      <div class="metric-value">{{ total_reviews }}</div>
+      <div class="metric-label">Total Reviews</div>
+    </div>
+  </div>
+
+  <div class="col-sm-6 col-lg-2">
+    <div class="card metric-card critical h-100">
+      <div class="metric-value" style="color: var(--status-critical);">{{ total_critical }}</div>
+      <div class="metric-label">Critical Issues</div>
+    </div>
+  </div>
+
+  <div class="col-sm-6 col-lg-2">
+    <div class="card metric-card high h-100">
+      <div class="metric-value" style="color: var(--status-high);">{{ total_high }}</div>
+      <div class="metric-label">High Severity</div>
+    </div>
+  </div>
+
+  <div class="col-sm-6 col-lg-2">
+    <div class="card metric-card medium h-100">
+      <div class="metric-value" style="color: var(--status-medium);">{{ total_medium }}</div>
+      <div class="metric-label">Medium Severity</div>
+    </div>
+  </div>
+
+  <div class="col-sm-6 col-lg-2">
+    <div class="card metric-card low h-100">
+      <div class="metric-value" style="color: var(--status-low);">{{ total_low }}</div>
+      <div class="metric-label">Low / Quality</div>
+    </div>
+  </div>
+
+  <div class="col-sm-6 col-lg-2">
+    <div class="card metric-card health h-100">
+      <div class="metric-value" style="color: var(--accent-teal);">{{ avg_health_score }}%</div>
+      <div class="metric-label">Avg Health Score</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <!-- Chart.js Visualization (Clean White Container) -->
+  <div class="col-lg-5">
+    <div class="card h-100">
+      <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-pie-chart me-2" style="color: var(--primary);"></i>Severity Distribution</span>
+        <span class="badge badge-orange">Total: {{ total_vulnerabilities }}</span>
+      </div>
+      <div class="card-body d-flex flex-column align-items-center justify-content-center p-3" style="min-height: 280px;">
+        <div style="position: relative; height: 230px; width: 100%;">
+          <canvas id="severityChart" 
+                  data-critical="{{ total_critical }}"
+                  data-high="{{ total_high }}"
+                  data-medium="{{ total_medium }}"
+                  data-low="{{ total_low }}">
+          </canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Review Health Score Formula & Status Overview -->
+  <div class="col-lg-7">
+    <div class="card h-100">
+      <div class="card-header bg-white">
+        <i class="bi bi-calculator me-2" style="color: var(--primary);"></i>Code Health Scoring Mechanism
+      </div>
+      <div class="card-body p-3">
+        <div class="p-3 rounded border mb-3" style="background-color: var(--primary-light); border-color: var(--primary-border) !important;">
+          <h6 class="fw-bold mb-1" style="color: var(--primary-dark);">Mathematical Formula:</h6>
+          <code style="color: var(--primary-dark); font-weight: 600;">Health Score = max(0, 100 - (Critical &times; 20 + High &times; 10 + Medium &times; 4 + Low &times; 1))</code>
+          <p class="small mt-2 mb-0" style="color: var(--text-secondary);">
+            Deductions are proportionally weighted by exploitability risk and maintenance friction.
+            A score of 90+ earns an 'A' grade (Approved). Critical issues trigger a 'Changes Requested' verdict.
+          </p>
+        </div>
+
+        <h6 class="fw-bold small text-uppercase mb-2" style="color: var(--text-secondary);">Severity Classification Tiers:</h6>
+        <div class="row g-2">
+          <div class="col-6 col-md-3">
+            <div class="p-2 border rounded bg-white text-center">
+              <span class="badge badge-critical mb-1">CRITICAL (9.0-10.0)</span>
+              <div class="small text-muted">-20 pts per issue</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="p-2 border rounded bg-white text-center">
+              <span class="badge badge-high mb-1">HIGH (7.0-8.9)</span>
+              <div class="small text-muted">-10 pts per issue</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="p-2 border rounded bg-white text-center">
+              <span class="badge badge-medium mb-1">MEDIUM (4.0-6.9)</span>
+              <div class="small text-muted">-4 pts per issue</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="p-2 border rounded bg-white text-center">
+              <span class="badge badge-low mb-1">LOW (0.1-3.9)</span>
+              <div class="small text-muted">-1 pt per issue</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Review History Table -->
+<div class="card">
+  <div class="card-header bg-white d-flex justify-content-between align-items-center">
+    <span><i class="bi bi-clock-history me-2" style="color: var(--primary);"></i>Recent Code Review History</span>
+    <a href="{{ url_for('history') }}" class="btn btn-outline-secondary btn-sm">View All History</a>
+  </div>
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Review ID</th>
+            <th>File Name</th>
+            <th>Language</th>
+            <th>Health Score</th>
+            <th>Verdict</th>
+            <th>Findings</th>
+            <th>Date</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if recent_reviews %}
+            {% for r in recent_reviews %}
+            <tr>
+              <td><code style="color: var(--primary-dark);">{{ r.review_id }}</code></td>
+              <td><strong>{{ r.filename }}</strong></td>
+              <td>
+                <span class="badge badge-orange">
+                  {{ r.detected_language|capitalize }}
+                </span>
+              </td>
+              <td>
+                <span class="fw-bold {% if r.health_score >= 80 %}text-success{% elif r.health_score >= 60 %}text-warning{% else %}text-danger{% endif %}">
+                  {{ r.health_score }}% ({{ r.letter_grade }})
+                </span>
+              </td>
+              <td>
+                {% if r.pr_status == 'Approved' %}
+                  <span class="badge badge-pr-approved">Approved</span>
+                {% elif r.pr_status == 'Changes Requested' %}
+                  <span class="badge badge-pr-changes">Changes Requested</span>
+                {% else %}
+                  <span class="badge badge-pr-suggestions">Approved w/ Suggestions</span>
+                {% endif %}
+              </td>
+              <td>
+                <span class="badge badge-critical">{{ r.critical_count }}</span>
+                <span class="badge badge-high">{{ r.high_count }}</span>
+                <span class="badge badge-medium">{{ r.medium_count }}</span>
+                <span class="badge badge-low">{{ r.low_count }}</span>
+              </td>
+              <td class="small" style="color: var(--text-secondary);">{{ r.timestamp }}</td>
+              <td class="text-end">
+                <a href="{{ url_for('results', review_id=r.review_id) }}" class="btn btn-sm btn-outline-primary">
+                  View Results
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="8" class="text-center py-4" style="color: var(--text-secondary);">
+                No code reviews recorded yet. <a href="{{ url_for('submit') }}" style="color: var(--primary);">Submit your first review</a>.
+              </td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

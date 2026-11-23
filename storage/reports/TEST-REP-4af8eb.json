@@ -1,0 +1,74 @@
+{
+  "report_information": {
+    "project_name": "AI Code Review & Security Analysis Agent",
+    "audit_type": "Static Security & Code Quality Audit",
+    "review_id": "TEST-REP-4af8eb",
+    "review_date_utc": "2026-11-22 07:56:19 UTC",
+    "filename": "database_service.py",
+    "detected_language": "Python"
+  },
+  "review_summary": {
+    "overall_status": "CHANGES_REQUESTED",
+    "executive_summary": "Security analysis found SQL injection and hardcoded passwords.",
+    "code_health_assessment": {
+      "health_score": 72.0,
+      "letter_grade": "C"
+    },
+    "total_findings_by_severity": {
+      "total": 2,
+      "critical": 1,
+      "high": 1,
+      "medium": 0,
+      "low": 0
+    }
+  },
+  "security_findings": {
+    "critical": [
+      {
+        "title": "SQL Injection via Query Formatting",
+        "category": "OWASP A03:2021 - Injection",
+        "severity": "CRITICAL",
+        "heuristic_score": 9.8,
+        "affected_location": "Line 24 in database_service.py",
+        "description": "Dynamic SQL query formatting allows arbitrary query manipulation.",
+        "potential_impact": "Attacker can bypass auth or dump database records.",
+        "suggested_remediation": "Use parameterized queries with placeholder binding.",
+        "is_confirmed_pattern": true
+      }
+    ],
+    "high": [
+      {
+        "title": "Hardcoded Database Password",
+        "category": "OWASP A07:2021 - Identification and Authentication Failures",
+        "severity": "HIGH",
+        "heuristic_score": 8.5,
+        "affected_location": "Line 12 in database_service.py",
+        "description": "Database credentials hardcoded directly into source code.",
+        "potential_impact": "Unauthorized database compromise via source repository inspection.",
+        "suggested_remediation": "Externalize credentials to environment variables.",
+        "is_confirmed_pattern": true
+      }
+    ],
+    "medium": [],
+    "low": []
+  },
+  "code_quality_assessment": {
+    "total_quality_smells": 0,
+    "findings": []
+  },
+  "recommendations_for_improvement": [
+    {
+      "priority": "High",
+      "recommendation": "Implement Parameterized SQL Queries",
+      "reason": "Dynamic string concatenation allows unauthorized database access or extraction.",
+      "suggested_action": "Replace query string formatting with bound parameter placeholders (%s, ?)."
+    },
+    {
+      "priority": "High",
+      "recommendation": "Externalize Embedded Credentials",
+      "reason": "Hardcoded secrets in source control expose accounts to unauthorized compromise.",
+      "suggested_action": "Store credentials in environment variables or an enterprise secrets vault."
+    }
+  ],
+  "final_review_summary": "Review concluded with status CHANGES_REQUESTED. The target artifact contains 1 critical and 1 high severity security issues requiring immediate remediation."
+}

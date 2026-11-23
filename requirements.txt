@@ -1,0 +1,29 @@
+# AI Code Review & Security Analysis Agent - Pinned & Compatible Dependencies
+# Python Compatibility: Python 3.10, 3.11, 3.12
+
+# Core Web & UI Framework
+streamlit>=1.30.0,<=1.67.0
+numpy==1.26.4
+pandas==2.2.3
+pyarrow==17.0.0
+
+# Database & ORM
+SQLAlchemy>=2.0.0,<2.2.0
+
+# AI / ML / RAG Pipeline
+google-generativeai>=0.8.0
+langchain>=0.1.0
+langchain-community>=0.0.20
+chromadb>=0.4.22
+sentence-transformers>=2.2.2
+
+# Report Generation & Utilities
+reportlab>=4.0.0
+python-dotenv>=1.0.0
+pytest>=7.4.0
+requests>=2.31.0
+
+# Optional REST API Engine
+Flask>=3.0.0
+Flask-Cors>=4.0.0
+Werkzeug>=3.0.0

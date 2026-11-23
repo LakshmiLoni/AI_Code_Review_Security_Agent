@@ -1,0 +1,171 @@
+```html
+{% extends "base.html" %}
+{% set active_page = "assistant" %}
+
+{% block content %}
+
+<div class="row g-3">
+
+  <!-- Assistant Header -->
+  <div class="col-12">
+    <div class="card p-3 bg-white">
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
+
+        <div>
+          <div class="d-flex align-items-center gap-2">
+            
+
+            <h5 class="fw-bold mb-0" style="color: var(--text-dark);">
+              Conversational Code &amp; Security Assistant
+            </h5>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+          {% if active_review %}
+          <span class="badge badge-teal py-1 px-2">
+            Active: <code>{{ active_review.review_id }}</code>
+          </span>
+          {% endif %}
+
+          <button type="button" class="btn btn-outline-secondary btn-sm" id="clearChatBtn">
+            <i class="bi bi-trash3 me-1"></i> Clear Chat
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Conversation Chat - Left Side -->
+  <div class="col-lg-9 col-12">
+
+    <div class="card h-100">
+      <div class="card-body p-3">
+
+        <!-- Messages -->
+        <div class="chat-container mb-3" id="chatMessages">
+
+          <div class="chat-bubble assistant">
+            Hello! I am your AI Code Review &amp; Security Assistant. I can help explain vulnerabilities,
+            recommend secure code patterns in Python and Java, guide you through clean code principles,
+            and answer questions.
+
+            {% if active_review %}
+            <div class="mt-2 fw-bold small" style="color: var(--primary-dark);">
+              <i class="bi bi-pin-angle-fill me-1"></i>
+              Loaded active context for: <code>{{ active_review.filename }}</code>
+              ({{ active_review.total_findings }} findings detected).
+            </div>
+            {% endif %}
+          </div>
+
+          {% if chat_history %}
+            {% for msg in chat_history %}
+              <div class="chat-bubble {{ msg.role }}">
+                {{ msg.message }}
+
+                {% if msg.citations %}
+                <div class="chat-citation-box mt-2">
+                  <strong>
+                    <i class="bi bi-book me-1" style="color: var(--primary);"></i>
+                    Grounded Citations:
+                  </strong>
+
+                  <ul class="mb-0 ps-3 mt-1 small" style="color: var(--text-secondary);">
+                    {% for c in msg.citations %}
+                    <li><code>{{ c.source_file }}</code> § {{ c.section }}</li>
+                    {% endfor %}
+                  </ul>
+                </div>
+                {% endif %}
+              </div>
+            {% endfor %}
+          {% endif %}
+
+        </div>
+
+        <!-- Chat Input -->
+        <input type="hidden" id="activeReviewId"
+               value="{{ active_review.review_id if active_review else '' }}">
+
+        <div class="input-group">
+          <input
+            type="text"
+            class="form-control"
+            id="chatInput"
+            placeholder="Type your question here..."
+            autocomplete="off"
+            style="border-color: var(--border-color);"
+          >
+
+          <button class="btn btn-primary px-4"
+                  type="button"
+                  id="chatSendBtn">
+            <i class="bi bi-send-fill me-1"></i> Send
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Suggested Questions - Right Side -->
+  <div class="col-lg-3 col-12">
+
+    <div class="card p-3 bg-white h-100">
+
+      <div class="d-flex align-items-center gap-2 mb-3">
+        <i class="bi bi-lightbulb-fill" style="color: var(--primary);"></i>
+
+        <span class="small fw-bold"
+              style="color: var(--text-dark); letter-spacing: 0.3px;">
+          SUGGESTED QUESTIONS
+        </span>
+      </div>
+
+      <div class="d-flex flex-column gap-2">
+
+        <button class="prompt-suggestion text-start">
+          Why is this SQL query vulnerable?
+        </button>
+
+        <button class="prompt-suggestion text-start">
+          How can I fix this XSS vulnerability?
+        </button>
+
+        <button class="prompt-suggestion text-start">
+          Explain this finding in simple words.
+        </button>
+
+        <button class="prompt-suggestion text-start">
+          Show me the secure version of this code.
+        </button>
+
+        <button class="prompt-suggestion text-start">
+          What are OWASP Top 10 vulnerabilities?
+        </button>
+
+        <button class="prompt-suggestion text-start">
+          What is the difference between authentication and authorization?
+        </button>
+
+        <button class="prompt-suggestion text-start">
+          How can I improve the complexity of this function?
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/assistant.js') }}"></script>
+{% endblock %}
+```

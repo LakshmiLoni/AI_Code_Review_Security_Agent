@@ -1,0 +1,96 @@
+{
+  "report_information": {
+    "project_name": "AI Code Review & Security Analysis Agent",
+    "audit_type": "Static Security & Code Quality Audit",
+    "review_id": "REV-202611220518-42567E",
+    "review_date_utc": "2026-11-22 05:18:03 UTC",
+    "filename": "OrderController.java",
+    "detected_language": "Java"
+  },
+  "review_summary": {
+    "overall_status": "Changes Requested",
+    "executive_summary": "Automated Code Review for 'OrderController.java' (Java). Overall Code Health Score: 58.0/100 (Grade F). Identified 4 finding(s): 2 Critical, 0 High, 0 Medium, 2 Low. Verdict: Changes Requested.",
+    "code_health_assessment": {
+      "health_score": 58.0,
+      "letter_grade": "F"
+    },
+    "total_findings_by_severity": {
+      "total": 4,
+      "critical": 2,
+      "high": 0,
+      "medium": 0,
+      "low": 2
+    }
+  },
+  "security_findings": {
+    "critical": [
+      {
+        "title": "Java SQL Injection via Dynamic Statement Concatenation",
+        "category": "OWASP A03:2021 - Injection",
+        "severity": "CRITICAL",
+        "heuristic_score": 9.8,
+        "affected_location": "Line 36 in OrderController.java",
+        "description": "Direct string concatenation into an SQL statement via java.sql.Statement. Allows external actors to manipulate query structure and access or alter unauthorized database tables.",
+        "potential_impact": "Complete compromise of database confidentiality and authentication bypass.",
+        "suggested_remediation": "Replace Statement with java.sql.PreparedStatement and set parameters via setString/setInt.",
+        "is_confirmed_pattern": true
+      },
+      {
+        "title": "Java SQL Injection via Dynamic Statement Concatenation",
+        "category": "OWASP A03:2021 - Injection",
+        "severity": "CRITICAL",
+        "heuristic_score": 9.8,
+        "affected_location": "Line 37 in OrderController.java",
+        "description": "Direct string concatenation into an SQL statement via java.sql.Statement. Allows external actors to manipulate query structure and access or alter unauthorized database tables.",
+        "potential_impact": "Complete compromise of database confidentiality and authentication bypass.",
+        "suggested_remediation": "Replace Statement with java.sql.PreparedStatement and set parameters via setString/setInt.",
+        "is_confirmed_pattern": true
+      }
+    ],
+    "high": [],
+    "medium": [],
+    "low": [
+      {
+        "title": "Stack Trace Exposure via printStackTrace()",
+        "category": "OWASP A05:2021 - Security Misconfiguration",
+        "severity": "LOW",
+        "heuristic_score": 3.0,
+        "affected_location": "Line 19 in OrderController.java",
+        "description": "Calling e.printStackTrace() outputs detailed stack traces to standard error, leaking system paths, library versions, and query fragments to potential attackers.",
+        "potential_impact": "Provides valuable diagnostic intelligence to attackers during penetration testing.",
+        "suggested_remediation": "Use structured SLF4J / Logback logging with masked sensitive parameters.",
+        "is_confirmed_pattern": true
+      },
+      {
+        "title": "Stack Trace Exposure via printStackTrace()",
+        "category": "OWASP A05:2021 - Security Misconfiguration",
+        "severity": "LOW",
+        "heuristic_score": 3.0,
+        "affected_location": "Line 46 in OrderController.java",
+        "description": "Calling e.printStackTrace() outputs detailed stack traces to standard error, leaking system paths, library versions, and query fragments to potential attackers.",
+        "potential_impact": "Provides valuable diagnostic intelligence to attackers during penetration testing.",
+        "suggested_remediation": "Use structured SLF4J / Logback logging with masked sensitive parameters.",
+        "is_confirmed_pattern": true
+      }
+    ]
+  },
+  "code_quality_assessment": {
+    "total_quality_smells": 0,
+    "findings": []
+  },
+  "recommendations_for_improvement": [
+    {
+      "priority": "High",
+      "recommendation": "Implement Parameterized SQL Queries",
+      "reason": "Dynamic string concatenation allows unauthorized database access or extraction.",
+      "suggested_action": "Replace query string formatting with bound parameter placeholders (%s, ?)."
+    },
+    {
+      "priority": "Low",
+      "recommendation": "Stack Trace Exposure via printStackTrace()",
+      "reason": "Provides valuable diagnostic intelligence to attackers during penetration testing.",
+      "suggested_action": "Use structured SLF4J / Logback logging with masked sensitive parameters."
+    }
+  ],
+  "final_review_summary": "Review concluded with status Changes Requested. The target artifact contains 2 critical and 0 high severity security issues requiring immediate remediation."
+}

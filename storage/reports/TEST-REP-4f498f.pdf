@@ -1,0 +1,79 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 3 0 R >>
+endobj
+2 0 obj
+<< /Type /Outlines /Count 0 >>
+endobj
+3 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 3 0 R /MediaBox [0 0 595.28 841.89] /Contents 5 0 R /Resources << /Font << /F1 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> /F2 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >> >> >> >>
+endobj
+5 0 obj
+<< /Length 3722 >>
+stream
+BT
+/F1 8 Tf 0.44 0.50 0.58 rg
+40 812 Td (AI Code Review & Security Analysis Agent - Academic Technical Audit) Tj
+ET
+0.88 0.90 0.93 RG 0.5 w 40 806 m 555 806 l S
+0.88 0.90 0.93 RG 0.5 w 40 40 m 555 40 l S
+BT
+/F1 8 Tf 0.44 0.50 0.58 rg
+40 28 Td (Confidential Academic Evaluation Report - Strict Zero-Code Privacy) Tj
+ET
+BT
+/F1 8 Tf 0.44 0.50 0.58 rg
+505 28 Td (Page 1 of 1) Tj
+ET
+BT /F1 8 Tf 0.25 0.30 0.38 rg 40 785 Td (AI Code Review & Security Analysis Agent) Tj ET
+BT /F2 14 Tf 0.17 0.21 0.28 rg 40 773 Td (CODE REVIEW & SECURITY ANALYSIS REPORT) Tj ET
+BT /F2 8.5 Tf 0.25 0.30 0.38 rg 40 755 Td (Review ID: TEST-REP-4f498f  |  File: database_service.py  |  Language: Python) Tj ET
+BT /F2 8.5 Tf 0.25 0.30 0.38 rg 40 742 Td (Generated: 2026-11-22 04:21 UTC  |  PR Verdict: CHANGES_REQUESTED) Tj ET
+0.88 0.90 0.93 RG 0.5 w 40 729 m 555 729 l S
+BT /F2 11 Tf 0.37 0.52 0.44 rg 40 719 Td (1. Review Summary & Health Assessment) Tj ET
+BT /F1 8 Tf 0.25 0.30 0.38 rg 40 704 Td (Code Health Score: 72.0/100 \(Grade C\)  |  Status: CHANGES_REQUESTED) Tj ET
+BT /F1 8 Tf 0.25 0.30 0.38 rg 40 692 Td (Findings Summary: 1 Critical, 1 High, 0 Medium, 0 Low) Tj ET
+BT /F1 8 Tf 0.25 0.30 0.38 rg 40 680 Td (Security analysis found SQL injection and hardcoded passwords.) Tj ET
+0.88 0.90 0.93 RG 0.5 w 40 668 m 555 668 l S
+BT /F2 11 Tf 0.37 0.52 0.44 rg 40 658 Td (2. Security Vulnerability Findings) Tj ET
+BT /F2 8.5 Tf 0.17 0.21 0.28 rg 45 643 Td ([CRITICAL] SQL Injection via Query Formatting ? Line 24 in database_service.py) Tj ET
+BT /F1 7.5 Tf 0.35 0.40 0.48 rg 55 630 Td (Category: OWASP A03:2021 - Injection) Tj ET
+BT /F1 7.5 Tf 0.35 0.40 0.48 rg 55 619 Td (Explanation: Dynamic SQL query formatting allows arbitrary query manipulation.) Tj ET
+BT /F1 7.5 Tf 0.35 0.40 0.48 rg 55 608 Td (Potential Impact: Attacker can bypass auth or dump database records.) Tj ET
+BT /F1 7.5 Tf 0.35 0.40 0.48 rg 55 597 Td (Remediation: Use parameterized queries with placeholder binding.) Tj ET
+BT /F2 8.5 Tf 0.17 0.21 0.28 rg 45 586 Td ([HIGH] Hardcoded Database Password ? Line 12 in database_service.py) Tj ET
+BT /F1 7.5 Tf 0.35 0.40 0.48 rg 55 573 Td (Category: OWASP A07:2021 - Identification and Authentication Failures) Tj ET
+BT /F1 7.5 Tf 0.35 0.40 0.48 rg 55 562 Td (Explanation: Database credentials hardcoded directly into source code.) Tj ET
+BT /F1 7.5 Tf 0.35 0.40 0.48 rg 55 551 Td (Potential Impact: Unauthorized database compromise via source repository inspection.) Tj ET
+BT /F1 7.5 Tf 0.35 0.40 0.48 rg 55 540 Td (Remediation: Externalize credentials to environment variables.) Tj ET
+0.88 0.90 0.93 RG 0.5 w 40 529 m 555 529 l S
+BT /F2 11 Tf 0.37 0.52 0.44 rg 40 519 Td (3. Code Quality Assessment) Tj ET
+BT /F1 8 Tf 0.25 0.30 0.38 rg 40 504 Td (No significant code quality or maintainability issues identified.) Tj ET
+0.88 0.90 0.93 RG 0.5 w 40 492 m 555 492 l S
+BT /F2 11 Tf 0.37 0.52 0.44 rg 40 482 Td (4. Recommendations for Improvement) Tj ET
+BT /F2 8 Tf 0.17 0.21 0.28 rg 40 467 Td (Priority | Recommendation | Reason | Suggested Action) Tj ET
+BT /F1 7.5 Tf 0.25 0.30 0.38 rg 45 454 Td ([High] Implement Parameterized SQL Queries : Dynamic string concatenation allows unauthorized database...) Tj ET
+BT /F1 7.5 Tf 0.25 0.30 0.38 rg 45 442 Td ([High] Externalize Embedded Credentials : Hardcoded secrets in source control expose accounts to unaut...) Tj ET
+0.88 0.90 0.93 RG 0.5 w 40 430 m 555 430 l S
+BT /F2 11 Tf 0.37 0.52 0.44 rg 40 420 Td (5. Final Review Summary) Tj ET
+BT /F1 8 Tf 0.25 0.30 0.38 rg 40 405 Td (Analysis concluded with status CHANGES_REQUESTED and 2 total findings.) Tj ET
+BT /F1 8 Tf 0.25 0.30 0.38 rg 40 393 Td (Report generated automatically by static analysis and heuristic evaluation models.) Tj ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000110 00000 n 
+0000000167 00000 n 
+0000000412 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+4186
+%%EOF

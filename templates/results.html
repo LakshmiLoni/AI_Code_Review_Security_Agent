@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+{% set active_page = "results" %}
+
+{% block content %}
+<div class="row g-3">
+  <!-- Top Review Banner (Clean White Panel) -->
+  <div class="col-12">
+    <div class="card p-3 bg-white">
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+        <div>
+          <div class="d-flex align-items-center gap-2 mb-1">
+            <span class="badge badge-orange">
+              {{ review.detected_language|capitalize }}
+            </span>
+            <h5 class="fw-bold mb-0" style="color: var(--text-dark);">{{ review.filename }}</h5>
+            <code style="color: var(--primary-dark);" class="small">({{ review.review_id }})</code>
+          </div>
+          <p class="small mb-0" style="color: var(--text-secondary);">Reviewed on {{ review.timestamp }} &middot; Static AST + OWASP Scan</p>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+          <!-- Download Buttons -->
+          <a href="{{ url_for('export_report', review_id=review.review_id, format='pdf') }}" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-file-earmark-pdf me-1 text-danger"></i> Download PDF
+          </a>
+          <a href="{{ url_for('export_report', review_id=review.review_id, format='json') }}" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-filetype-json me-1" style="color: var(--primary);"></i> Export JSON
+          </a>
+          <a href="{{ url_for('assistant', review_id=review.review_id) }}" class="btn btn-primary btn-sm">
+            <i class="bi bi-chat-dots me-1"></i> Ask AI Assistant
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Pills between Result Views -->
+  <div class="col-12">
+    <ul class="nav nav-pills bg-white p-2 rounded border">
+      <li class="nav-item">
+        <a class="nav-link active fw-bold" href="{{ url_for('results', review_id=review.review_id) }}">
+          <i class="bi bi-git me-1"></i> PR Review Summary
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('findings_view', review_id=review.review_id) }}">
+          <i class="bi bi-shield-exclamation me-1"></i> All Findings ({{ review.total_findings }})
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('remediation_view', review_id=review.review_id) }}">
+          <i class="bi bi-wrench-adjustable me-1"></i> Remediation Plan
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('assistant', review_id=review.review_id) }}">
+          <i class="bi bi-robot me-1"></i> Ask Assistant
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Left: Pull Request Status & Executive Summary -->
+  <div class="col-lg-8">
+    <!-- PR Status Card -->
+    <div class="card mb-3">
+      <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-github me-2" style="color: var(--primary);"></i>Automated Pull Request Review</span>
+        {% if review.pr_status == 'Approved' %}
+          <span class="badge badge-pr-approved">APPROVED</span>
+        {% elif review.pr_status == 'Changes Requested' %}
+          <span class="badge badge-pr-changes">CHANGES REQUESTED</span>
+        {% else %}
+          <span class="badge badge-pr-suggestions">APPROVED WITH SUGGESTIONS</span>
+        {% endif %}
+      </div>
+      <div class="card-body p-4">
+        <h6 class="fw-bold mb-2" style="color: var(--text-dark);">Review Assessment</h6>
+        <p class="mb-3" style="color: var(--text-secondary); line-height: 1.6;">{{ review.verdict_note }}</p>
+
+        <h6 class="fw-bold mb-2" style="color: var(--text-dark);">Executive Summary</h6>
+        <div class="p-3 rounded border mb-3" style="background-color: var(--bg-subtle);">
+          <p class="mb-0 fs-6" style="color: var(--text-main);">{{ review.executive_summary }}</p>
+        </div>
+
+        {% if review.security_observations %}
+        <h6 class="fw-bold mb-2" style="color: var(--text-dark);"><i class="bi bi-shield-x me-1 text-danger"></i>Security Observations</h6>
+        <ul class="list-group list-group-flush mb-3">
+          {% for obs in review.security_observations %}
+          <li class="list-group-item px-0 py-1 small" style="color: var(--text-secondary); background: transparent;">
+            <i class="bi bi-arrow-right-short text-danger"></i> {{ obs }}
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+
+        {% if review.quality_observations %}
+        <h6 class="fw-bold mb-2" style="color: var(--text-dark);"><i class="bi bi-check-circle me-1" style="color: var(--primary);"></i>Code Quality Observations</h6>
+        <ul class="list-group list-group-flush mb-0">
+          {% for obs in review.quality_observations %}
+          <li class="list-group-item px-0 py-1 small" style="color: var(--text-secondary); background: transparent;">
+            <i class="bi bi-arrow-right-short" style="color: var(--primary);"></i> {{ obs }}
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Prioritized Remediation Roadmap Preview -->
+    <div class="card">
+      <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-signpost-split me-2" style="color: var(--primary);"></i>Remediation Roadmap</span>
+        <a href="{{ url_for('remediation_view', review_id=review.review_id) }}" class="btn btn-sm btn-outline-primary">
+          View Full Plan &amp; Code
+        </a>
+      </div>
+      <div class="card-body p-3">
+        {% if review.roadmap %}
+        <ol class="list-group list-group-numbered">
+          {% for step in review.roadmap[:4] %}
+          <li class="list-group-item d-flex justify-content-between align-items-start py-2 border-0 border-bottom">
+            <div class="ms-2 me-auto">
+              <div class="fw-bold" style="color: var(--text-dark);">
+                Line {{ step.line_number }}: {{ step.title }}
+                <span class="badge {% if step.severity == 'CRITICAL' %}badge-critical{% elif step.severity == 'HIGH' %}badge-high{% elif step.severity == 'MEDIUM' %}badge-medium{% else %}badge-low{% endif %} ms-1">
+                  {{ step.severity }}
+                </span>
+              </div>
+              <p class="small mb-0" style="color: var(--text-secondary);">{{ step.safety_rationale }}</p>
+            </div>
+          </li>
+          {% endfor %}
+        </ol>
+        {% else %}
+        <p class="text-center py-3 mb-0" style="color: var(--text-secondary);">No active remediation steps required. Code meets security criteria.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: Health Score & Findings Breakdown -->
+  <div class="col-lg-4">
+    <!-- Code Health Score Card (Clean White, Subtle Shadows) -->
+    <div class="card mb-3 text-center p-4">
+      <div class="small fw-bold text-uppercase mb-1" style="color: var(--text-secondary); letter-spacing: 0.5px;">Code Health Score</div>
+      <div class="health-gauge mb-2">{{ review.health_score }}%</div>
+      <div>
+        <span class="health-grade {% if review.letter_grade in ['A', 'B'] %}badge-pr-approved{% elif review.letter_grade == 'C' %}badge-pr-suggestions{% else %}badge-pr-changes{% endif %}">
+          Grade {{ review.letter_grade }}
+        </span>
+      </div>
+      <p class="small mt-3 mb-0" style="color: var(--text-secondary);">
+        Internal heuristic index based on OWASP severity penalties. Not an official compliance certificate.
+      </p>
+    </div>
+
+    <!-- Findings Breakdown Card -->
+    <div class="card mb-3">
+      <div class="card-header bg-white">
+        <i class="bi bi-pie-chart me-2" style="color: var(--primary);"></i>Findings Summary
+      </div>
+      <div class="card-body p-3">
+        <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+          <span class="fw-bold" style="color: var(--status-critical);"><i class="bi bi-exclamation-octagon-fill me-1"></i>Critical</span>
+          <span class="badge badge-critical fs-6">{{ review.critical_count }}</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+          <span class="fw-bold" style="color: var(--status-high);"><i class="bi bi-exclamation-triangle-fill me-1"></i>High</span>
+          <span class="badge badge-high fs-6">{{ review.high_count }}</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+          <span class="fw-bold" style="color: var(--status-medium);"><i class="bi bi-info-circle-fill me-1"></i>Medium</span>
+          <span class="badge badge-medium fs-6">{{ review.medium_count }}</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+          <span class="fw-bold" style="color: var(--status-low);"><i class="bi bi-check-circle-fill me-1"></i>Low / Smells</span>
+          <span class="badge badge-low fs-6">{{ review.low_count }}</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center py-2 fw-bold" style="color: var(--text-dark);">
+          <span>Total Findings</span>
+          <span>{{ review.total_findings }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

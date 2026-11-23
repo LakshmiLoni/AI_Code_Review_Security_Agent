@@ -1,0 +1,125 @@
+{
+  "report_information": {
+    "project_name": "AI Code Review & Security Analysis Agent",
+    "audit_type": "Static Security & Code Quality Audit",
+    "review_id": "REV-202611220518-391FC9",
+    "review_date_utc": "2026-11-22 05:18:03 UTC",
+    "filename": "user_service.py",
+    "detected_language": "Python"
+  },
+  "review_summary": {
+    "overall_status": "Changes Requested",
+    "executive_summary": "Automated Code Review for 'user_service.py' (Python). Overall Code Health Score: 45.0/100 (Grade F). Identified 5 finding(s): 2 Critical, 1 High, 1 Medium, 1 Low. Verdict: Changes Requested.",
+    "code_health_assessment": {
+      "health_score": 45.0,
+      "letter_grade": "F"
+    },
+    "total_findings_by_severity": {
+      "total": 5,
+      "critical": 2,
+      "high": 1,
+      "medium": 1,
+      "low": 1
+    }
+  },
+  "security_findings": {
+    "critical": [
+      {
+        "title": "SQL Injection (SQLi) via Dynamic Query Formatting",
+        "category": "OWASP A03:2021 - Injection",
+        "severity": "CRITICAL",
+        "heuristic_score": 9.8,
+        "affected_location": "Line 20 in user_service.py",
+        "description": "Dynamic SQL query construction detected using string interpolation, formatting, or concatenation. Untrusted input concatenated directly into query strings allows attackers to bypass authentication, extract database contents, or modify data.",
+        "potential_impact": "Allows arbitrary SQL execution. An attacker could enter `' OR '1'='1` to bypass authentication or execute `UNION SELECT` to exfiltrate private credentials.",
+        "suggested_remediation": "Use parameterized queries with bound placeholders (%s or ?), or leverage an ORM.",
+        "is_confirmed_pattern": true
+      },
+      {
+        "title": "OS Command Injection via Shell Execution",
+        "category": "OWASP A03:2021 - Injection",
+        "severity": "CRITICAL",
+        "heuristic_score": 9.5,
+        "affected_location": "Line 30 in user_service.py",
+        "description": "Execution of operating system shell commands using os.system() or subprocess with shell=True. If user-controlled input reaches the command string, arbitrary system commands can be executed.",
+        "potential_impact": "Attackers can chain shell metacharacters (;, |, &&, `) to execute arbitrary commands with application privileges, leading to full server compromise.",
+        "suggested_remediation": "Pass command arguments as a list of strings and set shell=False, or use native Python libraries.",
+        "is_confirmed_pattern": true
+      }
+    ],
+    "high": [],
+    "medium": [],
+    "low": []
+  },
+  "code_quality_assessment": {
+    "total_quality_smells": 3,
+    "findings": [
+      {
+        "title": "Mutable Default Argument in 'GetUserRecords'",
+        "category": "Python Anti-Patterns",
+        "severity": "HIGH",
+        "heuristic_score": 7.5,
+        "affected_location": "Line 14 in user_service.py",
+        "description": "Function 'GetUserRecords' uses a mutable list as a default argument. Python default arguments are evaluated once at function definition time, meaning modifications will persist across calls.",
+        "potential_impact": "Leads to state pollution bugs and data leaks between different user invocations.",
+        "suggested_remediation": "Use None as the default value and initialize the mutable structure inside the body.",
+        "is_confirmed_pattern": true
+      },
+      {
+        "title": "Bare 'except:' Clause Detected",
+        "category": "Exception Handling",
+        "severity": "MEDIUM",
+        "heuristic_score": 5.8,
+        "affected_location": "Line 39 in user_service.py",
+        "description": "A bare 'except:' clause catches all exceptions, including KeyboardInterrupt, SystemExit, and MemoryError, preventing normal termination.",
+        "potential_impact": "Suppresses critical operational failures and masks syntax or logical errors.",
+        "suggested_remediation": "Catch specific exception types (e.g. ValueError, KeyError) or at least Exception.",
+        "is_confirmed_pattern": true
+      },
+      {
+        "title": "Non-Standard Function Naming 'GetUserRecords'",
+        "category": "PEP 8 Style & Conventions",
+        "severity": "LOW",
+        "heuristic_score": 2.5,
+        "affected_location": "Line 14 in user_service.py",
+        "description": "Function 'GetUserRecords' does not follow Python's PEP 8 snake_case naming convention.",
+        "potential_impact": "Inconsistent naming harms codebase readability and maintainability.",
+        "suggested_remediation": "Rename 'GetUserRecords' using snake_case style.",
+        "is_confirmed_pattern": true
+      }
+    ]
+  },
+  "recommendations_for_improvement": [
+    {
+      "priority": "High",
+      "recommendation": "Implement Parameterized SQL Queries",
+      "reason": "Dynamic string concatenation allows unauthorized database access or extraction.",
+      "suggested_action": "Replace query string formatting with bound parameter placeholders (%s, ?)."
+    },
+    {
+      "priority": "High",
+      "recommendation": "Eliminate OS Shell Command Execution",
+      "reason": "Shell execution permits arbitrary host system takeover via untrusted input.",
+      "suggested_action": "Use safe process execution with argument vectors and shell=False."
+    },
+    {
+      "priority": "High",
+      "recommendation": "Avoid Mutable Default Arguments",
+      "reason": "Default lists/dicts are shared across all calls, causing cross-call state leakage.",
+      "suggested_action": "Set default parameter to None and initialize new collections inside the function."
+    },
+    {
+      "priority": "Medium",
+      "recommendation": "Bare 'except:' Clause Detected",
+      "reason": "Suppresses critical operational failures and masks syntax or logical errors.",
+      "suggested_action": "Catch specific exception types (e.g. ValueError, KeyError) or at least Exception."
+    },
+    {
+      "priority": "Low",
+      "recommendation": "Non-Standard Function Naming 'GetUserRecords'",
+      "reason": "Inconsistent naming harms codebase readability and maintainability.",
+      "suggested_action": "Rename 'GetUserRecords' using snake_case style."
+    }
+  ],
+  "final_review_summary": "Review concluded with status Changes Requested. The target artifact contains 2 critical and 1 high severity security issues requiring immediate remediation."
+}

@@ -1,0 +1,497 @@
+/* AI Code Review & Security Analysis Agent - Refined White & Orange Theme */
+:root {
+  /* Brand Palette */
+  --primary: #f97316;              /* Primary Orange */
+  --primary-dark: #ea580c;         /* Dark Orange */
+  --primary-light: #fff7ed;        /* Light Orange Tint */
+  --primary-border: #fed7aa;       /* Soft Orange Border */
+  
+  /* Neutral Palette (85% dominant white & subtle light) */
+  --bg-main: #ffffff;              /* Pure White Main Background */
+  --bg-subtle: #fafafa;            /* Soft Section Background */
+  --bg-card: #ffffff;              /* Card Panel Background */
+  --border-color: #e5e7eb;         /* Crisp Neutral Border */
+  --border-subtle: #f3f4f6;
+  
+  /* Typography */
+  --text-main: #262626;            /* Deep Neutral Text */
+  --text-secondary: #737373;       /* Secondary Muted Text */
+  --text-dark: #171717;            /* Headings */
+
+  /* Secondary Accent: Teal (3% strategic indicator) */
+  --accent-teal: #0d9488;
+  --accent-teal-bg: #f0fdfa;
+  --accent-teal-border: #99f6e4;
+  
+  /* Status Colors */
+  --status-critical: #dc2626;
+  --status-critical-bg: #fef2f2;
+  --status-critical-border: #fecaca;
+  
+  --status-high: #ea580c;
+  --status-high-bg: #fff7ed;
+  --status-high-border: #fed7aa;
+  
+  --status-medium: #d97706;
+  --status-medium-bg: #fefce8;
+  --status-medium-border: #fef08a;
+  
+  --status-low: #64748b;
+  --status-low-bg: #f8fafc;
+  --status-low-border: #e2e8f0;
+  
+  --status-success: #16a34a;
+  --status-success-bg: #f0fdf4;
+  --status-success-border: #bbf7d0;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
+  --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.06), 0 4px 6px -4px rgba(0, 0, 0, 0.03);
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+}
+
+main {
+  flex: 1;
+  background-color: var(--bg-main);
+}
+
+/* =========================================================================
+   HEADER / NAVBAR
+   ========================================================================= */
+.navbar {
+  background-color: #ffffff !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.03);
+}
+
+.navbar-brand {
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--text-dark) !important;
+  font-size: 1.18rem;
+  transition: opacity 0.15s ease;
+}
+
+.navbar-brand:hover {
+  opacity: 0.9;
+}
+
+.brand-icon {
+  color: var(--primary);
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.brand-badge {
+  background-color: var(--primary-light);
+  color: var(--primary-dark);
+  border: 1px solid var(--primary-border);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  font-size: 0.65rem;
+  padding: 0.2rem 0.45rem;
+  border-radius: 4px;
+}
+
+.nav-link {
+  font-weight: 500;
+  color: var(--text-secondary) !important;
+  padding: 0.5rem 0.85rem !important;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  font-size: 0.92rem;
+}
+
+.nav-link:hover {
+  color: var(--primary-dark) !important;
+  background-color: var(--primary-light);
+}
+
+.nav-link.active {
+  color: var(--primary-dark) !important;
+  background-color: var(--primary-light);
+  font-weight: 600;
+}
+
+/* Header Action Button */
+.btn-new-review {
+  background-color: var(--primary);
+  border: 1px solid var(--primary-dark);
+  color: #ffffff !important;
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(249, 115, 22, 0.25);
+  transition: all 0.2s ease;
+}
+
+.btn-new-review:hover {
+  background-color: var(--primary-dark);
+  border-color: #c2410c;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(234, 88, 12, 0.25);
+}
+
+/* Secondary Teal Indicator Badge */
+.badge-teal {
+  background-color: var(--accent-teal-bg);
+  color: var(--accent-teal);
+  border: 1px solid var(--accent-teal-border);
+  font-weight: 600;
+}
+
+/* =========================================================================
+   CARDS & PANELS
+   ========================================================================= */
+.card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.card-header {
+  background-color: #ffffff;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-dark);
+  font-weight: 600;
+  padding: 0.85rem 1.25rem;
+}
+
+.section-panel {
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
+
+/* Metric / Stat Cards */
+.metric-card {
+  padding: 1.2rem;
+  background-color: #ffffff;
+  border-left: 3px solid var(--primary);
+  border-radius: 8px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.metric-card.critical { border-left-color: var(--status-critical); }
+.metric-card.high { border-left-color: var(--status-high); }
+.metric-card.medium { border-left-color: var(--status-medium); }
+.metric-card.low { border-left-color: var(--status-low); }
+.metric-card.health { border-left-color: var(--accent-teal); }
+
+.metric-value {
+  font-size: 2.1rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--text-dark);
+  letter-spacing: -0.5px;
+}
+
+.metric-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  margin-top: 0.35rem;
+}
+
+/* =========================================================================
+   BUTTONS
+   ========================================================================= */
+.btn-primary {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
+  font-weight: 600;
+  transition: all 0.18s ease;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+  background-color: var(--primary-dark);
+  border-color: var(--primary-dark);
+  color: #ffffff;
+  box-shadow: 0 2px 4px rgba(234, 88, 12, 0.2);
+}
+
+.btn-primary:active {
+  background-color: #c2410c;
+  border-color: #c2410c;
+}
+
+.btn-outline-primary {
+  color: var(--primary-dark);
+  border-color: var(--primary);
+  background-color: #ffffff;
+  font-weight: 500;
+  transition: all 0.18s ease;
+}
+
+.btn-outline-primary:hover, .btn-outline-primary:focus {
+  background-color: var(--primary-light);
+  border-color: var(--primary-dark);
+  color: var(--primary-dark);
+}
+
+.btn-outline-secondary {
+  color: var(--text-secondary);
+  border-color: var(--border-color);
+  background-color: #ffffff;
+  font-weight: 500;
+}
+
+.btn-outline-secondary:hover {
+  background-color: var(--bg-subtle);
+  border-color: #cbd5e1;
+  color: var(--text-main);
+}
+
+/* =========================================================================
+   BADGES & LABELS
+   ========================================================================= */
+.badge-critical {
+  background-color: var(--status-critical-bg);
+  color: var(--status-critical);
+  border: 1px solid var(--status-critical-border);
+  font-weight: 600;
+}
+
+.badge-high {
+  background-color: var(--status-high-bg);
+  color: var(--status-high);
+  border: 1px solid var(--status-high-border);
+  font-weight: 600;
+}
+
+.badge-medium {
+  background-color: var(--status-medium-bg);
+  color: var(--status-medium);
+  border: 1px solid var(--status-medium-border);
+  font-weight: 600;
+}
+
+.badge-low {
+  background-color: var(--status-low-bg);
+  color: var(--status-low);
+  border: 1px solid var(--status-low-border);
+  font-weight: 600;
+}
+
+.badge-orange {
+  background-color: var(--primary-light);
+  color: var(--primary-dark);
+  border: 1px solid var(--primary-border);
+  font-weight: 600;
+}
+
+/* PR Status Badges */
+.badge-pr-approved {
+  background-color: var(--status-success-bg);
+  color: var(--status-success);
+  border: 1px solid var(--status-success-border);
+  font-weight: 700;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.85rem;
+  border-radius: 6px;
+}
+
+.badge-pr-changes {
+  background-color: var(--status-critical-bg);
+  color: var(--status-critical);
+  border: 1px solid var(--status-critical-border);
+  font-weight: 700;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.85rem;
+  border-radius: 6px;
+}
+
+.badge-pr-suggestions {
+  background-color: var(--status-high-bg);
+  color: var(--status-high);
+  border: 1px solid var(--status-high-border);
+  font-weight: 700;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.85rem;
+  border-radius: 6px;
+}
+
+/* =========================================================================
+   CODE SNIPPETS & DISPLAY
+   ========================================================================= */
+pre, code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+pre.code-snippet {
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 0.85rem 1rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--text-dark);
+  overflow-x: auto;
+}
+
+pre.corrected-snippet {
+  background-color: var(--status-success-bg);
+  border: 1px solid var(--status-success-border);
+  border-radius: 6px;
+  padding: 0.85rem 1rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #14532d;
+  overflow-x: auto;
+}
+
+/* Form Controls & Textarea */
+.form-control:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 0.25rem rgba(249, 115, 22, 0.15);
+}
+
+/* Tabs */
+.nav-tabs .nav-link {
+  color: var(--text-secondary);
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  font-weight: 500;
+}
+
+.nav-tabs .nav-link.active {
+  color: var(--primary-dark) !important;
+  background-color: #ffffff;
+  border-color: var(--border-color) var(--border-color) #ffffff;
+  font-weight: 600;
+}
+
+.nav-pills .nav-link {
+  color: var(--text-secondary);
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+
+.nav-pills .nav-link:hover {
+  background-color: var(--primary-light);
+  color: var(--primary-dark);
+}
+
+.nav-pills .nav-link.active {
+  background-color: var(--primary);
+  color: #ffffff !important;
+  box-shadow: 0 1px 3px rgba(249, 115, 22, 0.3);
+}
+
+/* =========================================================================
+   CHAT ASSISTANT
+   ========================================================================= */
+.chat-container {
+  height: 480px;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: #ffffff;
+  padding: 1.25rem;
+}
+
+.chat-bubble {
+  max-width: 82%;
+  margin-bottom: 1rem;
+  padding: 0.85rem 1.15rem;
+  border-radius: 12px;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  box-shadow: var(--shadow-sm);
+}
+
+.chat-bubble.user {
+  margin-left: auto;
+  background-color: var(--primary);
+  color: #ffffff;
+  border-bottom-right-radius: 2px;
+}
+
+.chat-bubble.assistant {
+  margin-right: auto;
+  background-color: var(--bg-subtle);
+  color: var(--text-main);
+  border-bottom-left-radius: 2px;
+  border: 1px solid var(--border-color);
+}
+
+.chat-citation-box {
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--primary);
+  font-size: 0.82rem;
+  padding: 0.5rem 0.75rem;
+  margin-top: 0.65rem;
+  border-radius: 0 6px 6px 0;
+}
+
+.prompt-suggestion {
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  border-radius: 20px;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+
+.prompt-suggestion:hover {
+  background-color: var(--primary-light);
+  border-color: var(--primary);
+  color: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+/* =========================================================================
+   HEALTH GAUGE
+   ========================================================================= */
+.health-gauge {
+  font-size: 3.2rem;
+  font-weight: 800;
+  color: var(--primary-dark);
+  line-height: 1;
+  letter-spacing: -1px;
+}
+
+.health-grade {
+  display: inline-block;
+  font-size: 1.2rem;
+  font-weight: 700;
+  padding: 0.25rem 0.85rem;
+  border-radius: 6px;
+}
+
+/* =========================================================================
+   FOOTER
+   ========================================================================= */
+footer {
+  background-color: #ffffff;
+  border-top: 1px solid var(--border-color);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}

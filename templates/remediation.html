@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% set active_page = "remediation" %}
+
+{% block content %}
+<div class="row g-3">
+  <!-- Top Bar -->
+  <div class="col-12">
+    <div class="card p-3 bg-white">
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
+        <div>
+          <h5 class="fw-bold mb-0" style="color: var(--text-dark);">Remediation Guide &amp; Code Corrections</h5>
+          <p class="small mb-0" style="color: var(--text-secondary);">Prioritized defensive roadmap with side-by-side refactoring examples</p>
+        </div>
+        <div class="d-flex gap-2">
+          <a href="{{ url_for('results', review_id=review.review_id) }}" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Back to Review
+          </a>
+          <a href="{{ url_for('assistant', review_id=review.review_id) }}" class="btn btn-primary btn-sm">
+            <i class="bi bi-robot me-1"></i> Ask Assistant to Explain
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Alert (Soft Light Orange Banner) -->
+  {% if roadmap %}
+  <div class="col-12">
+    <div class="p-3 rounded border d-flex align-items-center justify-content-between mb-0" style="background-color: var(--primary-light); border-color: var(--primary-border) !important;">
+      <div style="color: var(--primary-dark);">
+        <i class="bi bi-shield-exclamation fs-5 me-2" style="color: var(--primary);"></i>
+        <strong>Action Required:</strong> Remediate {{ roadmap|length }} finding(s) before deploying to production.
+        Original source files are never modified directly.
+      </div>
+      <span class="badge badge-orange">{{ review.detected_language|capitalize }}</span>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Roadmap Items -->
+  <div class="col-12">
+    {% if roadmap %}
+      {% for item in roadmap %}
+      <div class="card mb-4 border">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center py-2">
+          <div class="d-flex align-items-center gap-2">
+            <span class="badge rounded-circle px-2 py-1" style="background-color: var(--primary); color: #ffffff;">{{ item.step_number }}</span>
+            <span class="badge {% if item.severity == 'CRITICAL' %}badge-critical{% elif item.severity == 'HIGH' %}badge-high{% elif item.severity == 'MEDIUM' %}badge-medium{% else %}badge-low{% endif %}">
+              {{ item.severity }}
+            </span>
+            <span class="fw-bold" style="color: var(--text-dark);">{{ item.title }}</span>
+            <span class="small" style="color: var(--text-secondary);">(Line {{ item.line_number }})</span>
+          </div>
+          {% if item.knowledge_base_reference %}
+          <span class="badge badge-teal">
+            <i class="bi bi-book me-1"></i> KB: {{ item.knowledge_base_reference }}
+          </span>
+          {% endif %}
+        </div>
+
+        <div class="card-body p-4">
+          <!-- Why problematic & Safety rationale -->
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <div class="p-3 rounded border h-100" style="background-color: var(--bg-subtle);">
+                <h6 class="fw-bold text-danger mb-2"><i class="bi bi-x-circle me-1"></i>Why the original code is problematic:</h6>
+                <p class="small mb-0" style="color: var(--text-secondary); line-height: 1.55;">{{ item.problem_explanation }}</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="p-3 rounded border h-100" style="background-color: var(--bg-subtle);">
+                <h6 class="fw-bold text-success mb-2"><i class="bi bi-check-circle me-1"></i>Why the suggested fix is safer:</h6>
+                <p class="small mb-0" style="color: var(--text-secondary); line-height: 1.55;">{{ item.safety_rationale }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Side-by-Side Code Blocks -->
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <span class="small fw-bold text-danger"><i class="bi bi-dash-circle me-1"></i>Original Vulnerable Pattern:</span>
+                <span class="small" style="color: var(--text-secondary);">Line {{ item.line_number }}</span>
+              </div>
+              <pre class="code-snippet mb-0"><code>{{ item.original_code_snippet }}</code></pre>
+            </div>
+
+            <div class="col-md-6">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <span class="small fw-bold text-success"><i class="bi bi-plus-circle me-1"></i>Suggested Secure Correction:</span>
+                <button type="button" class="btn btn-link btn-sm text-decoration-none p-0" style="color: var(--primary);" onclick="copySnippet('fix-{{ loop.index }}')">
+                  <i class="bi bi-clipboard"></i> Copy
+                </button>
+              </div>
+              <pre class="corrected-snippet mb-0"><code id="fix-{{ loop.index }}">{{ item.remediation_code }}</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="card p-5 text-center" style="color: var(--text-secondary);">
+        <i class="bi bi-shield-check mb-2" style="font-size: 3rem; color: var(--accent-teal);"></i>
+        <h5 class="mt-2" style="color: var(--text-dark);">No remediation required</h5>
+        <p class="small mb-0">The submitted code passed all security and quality thresholds cleanly.</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,73 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 3 0 R >>
+endobj
+2 0 obj
+<< /Type /Outlines /Count 0 >>
+endobj
+3 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 3 0 R /MediaBox [0 0 595.28 841.89] /Contents 5 0 R /Resources << /Font << /F1 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> /F2 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >> >> >> >>
+endobj
+5 0 obj
+<< /Length 3110 >>
+stream
+BT
+/F1 8 Tf 0.44 0.50 0.58 rg
+40 812 Td (AI Code Review & Security Analysis Agent - Academic Technical Audit) Tj
+ET
+0.88 0.90 0.93 RG 0.5 w 40 806 m 555 806 l S
+0.88 0.90 0.93 RG 0.5 w 40 40 m 555 40 l S
+BT
+/F1 8 Tf 0.44 0.50 0.58 rg
+40 28 Td (Confidential Academic Evaluation Report - Strict Zero-Code Privacy) Tj
+ET
+BT
+/F1 8 Tf 0.44 0.50 0.58 rg
+505 28 Td (Page 1 of 1) Tj
+ET
+BT /F1 8 Tf 0.25 0.30 0.38 rg 40 785 Td (AI Code Review & Security Analysis Agent) Tj ET
+BT /F2 14 Tf 0.17 0.21 0.28 rg 40 773 Td (CODE REVIEW & SECURITY ANALYSIS REPORT) Tj ET
+BT /F2 8.5 Tf 0.25 0.30 0.38 rg 40 755 Td (Review ID: REV-202611220421-9D0D18  |  File: test_runner.py  |  Language: Python) Tj ET
+BT /F2 8.5 Tf 0.25 0.30 0.38 rg 40 742 Td (Generated: 2026-11-22 04:21 UTC  |  PR Verdict: Changes Requested) Tj ET
+0.88 0.90 0.93 RG 0.5 w 40 729 m 555 729 l S
+BT /F2 11 Tf 0.37 0.52 0.44 rg 40 719 Td (1. Review Summary & Health Assessment) Tj ET
+BT /F1 8 Tf 0.25 0.30 0.38 rg 40 704 Td (Code Health Score: 80.0/100 \(Grade B\)  |  Status: Changes Requested) Tj ET
+BT /F1 8 Tf 0.25 0.30 0.38 rg 40 692 Td (Findings Summary: 1 Critical, 0 High, 0 Medium, 0 Low) Tj ET
+BT /F1 8 Tf 0.25 0.30 0.38 rg 40 680 Td (Automated Code Review for 'test_runner.py' \(Python\). Overall Code Health Score: 80.0/100 \(Grade B\)...) Tj ET
+0.88 0.90 0.93 RG 0.5 w 40 668 m 555 668 l S
+BT /F2 11 Tf 0.37 0.52 0.44 rg 40 658 Td (2. Security Vulnerability Findings) Tj ET
+BT /F2 8.5 Tf 0.17 0.21 0.28 rg 45 643 Td ([CRITICAL] OS Command Injection via Shell Execution ? Line 3 in test_runner.py) Tj ET
+BT /F1 7.5 Tf 0.35 0.40 0.48 rg 55 630 Td (Category: OWASP A03:2021 - Injection) Tj ET
+BT /F1 7.5 Tf 0.35 0.40 0.48 rg 55 619 Td (Explanation: Execution of operating system shell commands using os.system\(\) or subprocess with shell...) Tj ET
+BT /F1 7.5 Tf 0.35 0.40 0.48 rg 55 608 Td (Potential Impact: Attackers can chain shell metacharacters \(;, |, &&, `\) to execute arbitrary comman...) Tj ET
+BT /F1 7.5 Tf 0.35 0.40 0.48 rg 55 597 Td (Remediation: Pass command arguments as a list of strings and set shell=False, or use native Python lib...) Tj ET
+0.88 0.90 0.93 RG 0.5 w 40 586 m 555 586 l S
+BT /F2 11 Tf 0.37 0.52 0.44 rg 40 576 Td (3. Code Quality Assessment) Tj ET
+BT /F1 8 Tf 0.25 0.30 0.38 rg 40 561 Td (No significant code quality or maintainability issues identified.) Tj ET
+0.88 0.90 0.93 RG 0.5 w 40 549 m 555 549 l S
+BT /F2 11 Tf 0.37 0.52 0.44 rg 40 539 Td (4. Recommendations for Improvement) Tj ET
+BT /F2 8 Tf 0.17 0.21 0.28 rg 40 524 Td (Priority | Recommendation | Reason | Suggested Action) Tj ET
+BT /F1 7.5 Tf 0.25 0.30 0.38 rg 45 511 Td ([High] Eliminate OS Shell Command Execution : Shell execution permits arbitrary host system takeover v...) Tj ET
+0.88 0.90 0.93 RG 0.5 w 40 499 m 555 499 l S
+BT /F2 11 Tf 0.37 0.52 0.44 rg 40 489 Td (5. Final Review Summary) Tj ET
+BT /F1 8 Tf 0.25 0.30 0.38 rg 40 474 Td (Analysis concluded with status Changes Requested and 1 total findings.) Tj ET
+BT /F1 8 Tf 0.25 0.30 0.38 rg 40 462 Td (Report generated automatically by static analysis and heuristic evaluation models.) Tj ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000110 00000 n 
+0000000167 00000 n 
+0000000412 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+3574
+%%EOF
